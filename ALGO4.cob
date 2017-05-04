@@ -94,6 +94,7 @@
 
 
 		WORKING-STORAGE SECTION.
+		77 WS-NRO-CTA-AUX PIC 9(8).
 		77 FS-CONS1 		PIC XX.
 		77 FS-CONS2 		PIC XX.
 		77 FS-CONS3 		PIC XX.
@@ -312,15 +313,17 @@
                 MOVE 4 TO cantLineas.
        LISTAR-BAJA.
                IF cantLineas >= 60 
-                  PERFORM IMPRIMIR_ENCABEZADO.
-               PERFORM IMPRIMIR_BAJA.
+                  PERFORM IMPRIMO-ENCABEZADO.
+               PERFORM IMPRIMIR-BAJA.
                ADD 1 TO bajas.
-        IMPRIMIR_BAJA-FIN.
+
+       IMPRIMIR_BAJA-FIN.
                DISPLAY "IMPRIMIR-BAJA".
                MOVE bajas TO PB-FINAL-TOTAL.
-               WRITE LINEA FROM PB-FINAL. 
-	  IMPRIMIR-BAJA.
-		            DISPLAY "IMPRIMO-BAJAS".
+               WRITE LINEA FROM PB-FINAL.
+
+	   IMPRIMIR-BAJA.
+		        DISPLAY "IMPRIMO-BAJAS".
                 WRITE LINEA FROM PB1-BAJA.
                 MOVE CON-MENOR-CUIT-CONS TO PB2-BAJA-CUIT-CONS.
                 MOVE CON-MENOR-FECHA-ALTA TO PB2-BAJA-FEC-ALTA.
@@ -402,4 +405,10 @@
                MOVE CON-MENOR-DIR TO MAE-DIR.
                MOVE WS-NRO-CTA-AUX TO  MAE-NRO-CTA.
                WRITE MAE.
+
+        IMPRIMO-BAJAS-FIN.
+        	DISPLAY "IMPRIMO-BAJAS-FIN".
+
+        GENERAR-ESTADISTICAS.
+        	DISPLAY "GENERAR-ESTADISTICAS".
 
