@@ -4,31 +4,31 @@
 	ENVIRONMENT DIVISION.
 	INPUT-OUTPUT SECTION.
 	FILE-CONTROL.
-	 SELECT CONS1 ASSIGN TO DISK
+		SELECT CONS1 ASSIGN TO DISK
 					ORGANIZATION IS LINE SEQUENTIAL
 					FILE STATUS IS FS-CONS1.
-	 SELECT CONS2 ASSIGN TO DISK
+		SELECT CONS2 ASSIGN TO DISK
 					ORGANIZATION IS LINE SEQUENTIAL
 					FILE STATUS IS FS-CONS2.
-	 SELECT CONS3 ASSIGN TO DISK
+		SELECT CONS3 ASSIGN TO DISK
 					ORGANIZATION IS LINE SEQUENTIAL
 					FILE STATUS IS FS-CONS3.
-	 SELECT CUENTAS ASSIGN TO DISK
+		SELECT CUENTAS ASSIGN TO DISK
 					ORGANIZATION IS LINE SEQUENTIAL
 					FILE STATUS IS FS-CTAS.
-	 SELECT ESTADOS ASSIGN TO DISK
+		SELECT ESTADOS ASSIGN TO DISK
 					ORGANIZATION IS LINE SEQUENTIAL
 					FILE STATUS IS FS-EST.
-	 SELECT MAESTRO ASSIGN TO DISK
+		SELECT MAESTRO ASSIGN TO DISK
 					ORGANIZATION IS LINE SEQUENTIAL
 					FILE STATUS IS FS-MAE.
-	 SELECT LISTADO ASSIGN TO DISK
+		SELECT LISTADO ASSIGN TO DISK
 					ORGANIZATION IS LINE SEQUENTIAL
 					FILE STATUS IS FS-LIST.
 	DATA DIVISION.
 	FILE SECTION.
-	FD CONS1        LABEL RECORD IS STANDARD
-			VALUE OF FILE-ID IS 'C:/cons1.dat'.
+	FD CONS1 	LABEL RECORD IS STANDARD
+				VALUE OF FILE-ID IS 'C:/cons1.dat'.
 			 
 	01 REG-CONS1.	
 	   03 REG-CONS1-CUIT-CONS          PIC 9(15).
@@ -39,8 +39,8 @@
 	   03 REG-CONS1-TEL                PIC X(15).
 	   03 REG-CONS1-DIR                PIC X(30).
 
-	FD CONS2        LABEL RECORD IS STANDARD
-			VALUE OF FILE-ID IS 'C:/cons2.dat'.
+	FD CONS2 	LABEL RECORD IS STANDARD
+				VALUE OF FILE-ID IS 'C:/cons2.dat'.
 	01 REG-CONS2.	
 	   03 REG-CONS2-CUIT-CONS          PIC 9(15).
 	   03 REG-CONS2-FECHA-ALTA         PIC X(10).
@@ -50,8 +50,8 @@
 	   03 REG-CONS2-TEL                PIC X(15).
 	   03 REG-CONS2-DIR                PIC X(30).
 
-	FD CONS3        LABEL RECORD IS STANDARD
-			VALUE OF FILE-ID IS 'C:/cons3.dat'.
+	FD CONS3 	LABEL RECORD IS STANDARD
+				VALUE OF FILE-ID IS 'C:/cons3.dat'.
 	01 REG-CONS3.	
 	   03 REG-CONS3-CUIT-CONS          PIC 9(15).
 	   03 REG-CONS3-FECHA-ALTA         PIC X(10).
@@ -63,7 +63,6 @@
 
 	FD CUENTAS LABEL RECORD IS STANDARD
 	           VALUE OF FILE-ID IS "cuentas.dat".
-
 	01 CTA. 
 	   03 CTA-CUIT-CONS           PIC 9(15).
 	   03 CTA-NRO-CTA             PIC 9(08).
@@ -90,63 +89,53 @@
 	   03 MAE-DIR                 PIC X(30).
 	   03 MAE-NRO-CTA             PIC 9(08).
 	
-        FD LISTADO LABEL RECORD OMITTED.
-        01 LINEA                      PIC X(80).
+	FD LISTADO LABEL RECORD OMITTED.
+	01 LINEA                      PIC X(80).
 
 	WORKING-STORAGE SECTION.
-
-      
-      
-	77 FS-CONS1 PIC XX.
-	77 FS-CONS2 PIC XX.
-	77 FS-CONS3 PIC XX.
-	77 FS-CTAS	PIC XX.
-	77 FS-EST	PIC XX.
-	77 FS-MAE	PIC XX.
-	77 FS-LIST	PIC XX.
+	77 FS-CONS1 		PIC XX.
+	77 FS-CONS2 		PIC XX.
+	77 FS-CONS3 		PIC XX.
+	77 FS-CTAS			PIC XX.
+	77 FS-EST			PIC XX.
+	77 FS-MAE			PIC XX.
+	77 FS-LIST			PIC XX.
 	77 CUIT-N1          PIC 9(15).
 	77 CUIT-N2          PIC 9(15).
 	77 CUIT-N3          PIC 9(15).
 	
-	77 cantConsorcios 	PIC 99 VALUE 0.
-	77 bajas 		PIC 99 VALUE 0.
-	77 cantLineas 		PIC 99 VALUE 0.
-	77 cantHojas 		PIC 99 VALUE 1.
-	77 cantCons1 		PIC 99 VALUE 0.
-	77 cantCons2 		PIC 99 VALUE 0.
-	77 cantCons3 		PIC 99 VALUE 0.
-	77 CANTESTADOS 		PIC 99 VALUE 0.
-	77 CONT-ANIO 		PIC 99 VALUE 0.
-        77 WS-DESCRIP-ESTADO PIC X(15).
-	77 WS-CONT-ESTADOS PIC 99.
-        01 WS-CONS-MENOR. 
-           03 WS-CONS-MENOR-CUIT-CONS          PIC 9(15).
-           03 WS-CONS-MENOR-FECHA-ALTA         PIC X(10).
-           03 WS-CONS-MENOR-FECHA-BAJA         PIC X(10).
-           03 WS-CONS-MENOR-ESTADO             PIC 9(02).
-           03 WS-CONS-MENOR-NOMBRE-CONSORCIO   PIC X(30).
-           03 WS-CONS-MENOR-TEL                PIC X(15).
-           03 WS-CONS-MENOR-DIR                PIC X(30).
+	77 cantConsorcios 		PIC 99 VALUE 0.
+	77 bajas 				PIC 99 VALUE 0.
+	77 cantLineas 			PIC 99 VALUE 0.
+	77 cantHojas 			PIC 99 VALUE 1.
+	77 cantCons1 			PIC 99 VALUE 0.
+	77 cantCons2 			PIC 99 VALUE 0.
+	77 cantCons3 			PIC 99 VALUE 0.
+	77 CANTESTADOS 			PIC 99 VALUE 0.
+	77 CONT-ANIO 			PIC 99 VALUE 0.
+    77 WS-DESCRIP-ESTADO 	PIC X(15).
+    77 WS-CONT-ESTADOS		PIC 99.
+    01 WS-CONS-MENOR. 
+       03 WS-CONS-MENOR-CUIT-CONS          PIC 9(15).
+       03 WS-CONS-MENOR-FECHA-ALTA         PIC X(10).
+       03 WS-CONS-MENOR-FECHA-BAJA         PIC X(10).
+       03 WS-CONS-MENOR-ESTADO             PIC 9(02).
+       03 WS-CONS-MENOR-NOMBRE-CONSORCIO   PIC X(30).
+       03 WS-CONS-MENOR-TEL                PIC X(15).
+       03 WS-CONS-MENOR-DIR                PIC X(30).
     
-	01 WS_TABLA_ESTADOS.
-           03 WS_TABLA_ESTADOS_ELEMENTO OCCURS 30 TIMES
-		ASCENDING KEY IS WS_TABLA_ESTADOS_ESTADO INDEXED BY IND.		   
-			05 WS_TABLA_ESTADOS_ESTADO PIC 9(02).
-			05 WS_TABLA_ESTADOS_DESCRIP PIC X(15).
-
-	77 CONS1_EOF		PIC XX VALUE "NO".
-	77 CONS2_EOF		PIC XX VALUE "NO".
-	77 CONS3_EOF		PIC XX VALUE "NO".
-	77 CONS_EOF			PIC XX VALUE "NO".
-	   88 EOF 				   VALUE "SI".
+	01 WS-TABLA-ESTADOS.
+           03 WS_TABLA-ESTADOS-ELEMENTO OCCURS 30 TIMES
+			ASCENDING KEY IS WS-TABLA-ESTADOS-ESTADO INDEXED BY IND.		   
+			05 WS-TABLA-ESTADOS-ESTADO PIC 9(02).
+			05 WS-TABLA-ESTADOS-DESCRIP PIC X(15).
 
 	PROCEDURE DIVISION.
-		perform INICIALIZAR.
-      	        perform ABRIR-ARCHIVOS.
+		perform ABRIR-ARCHIVOS.
 		perform GEN-TABLA-ESTADOS.
 		perform LEO-CONSORCIO-1.
-                perform LEO-CONSORCIO-2.
-                perform LEO-CONSORCIO-3.
+        perform LEO-CONSORCIO-2.
+        perform LEO-CONSORCIO-3.
 		perform LEO-CUENTAS.
 		perform IMPRIMO-ENCABEZADO.
 		perform CICLO-CONSORCIO.
@@ -154,94 +143,84 @@
 		perform MOSTRAR-ESTADISTICAS.
 		perform CERRAR-ARCHIVOS.
 	STOP RUN.
-
-        INICIALIZAR.
-		DISPLAY "INICIALIZAR INICIA".
-                MOVE 0 TO cantCons1.
-                MOVE 0 TO cantCons2.
-                MOVE 0 TO cantCons3.
-                MOVE 0 TO bajas.
-                MOVE 1 TO cantHojas.
-                MOVE 0 TO CONT-ANIO.
-                DISPLAY "INICIALIZAR FIN".
       
 	ABRIR-ARCHIVOS.
 		DISPLAY "ABRIR-ARCHIVOS INICIA".
-                OPEN INPUT CONS1.
-                IF FS-CONS1 NOT = ZERO
-                   DISPLAY "Error al abrir Consorcios 1: " FS-CONS1
-                   STOP RUN.
-                OPEN INPUT CONS2.
-                IF FS-CONS2 NOT = ZERO
-                   DISPLAY "Error al abrir Consorcios 2: " FS-CONS2
-                   STOP RUN.
-                OPEN INPUT CONS3.
-                IF FS-CONS3 NOT = ZERO
-                   DISPLAY "Error al abrir Consorcios 3: " FS-CONS3
-                   STOP RUN.
-      
-                OPEN INPUT CUENTAS.
-                IF FS-CTAs NOT = ZERO
-                   DISPLAY "Error al abrir Cuentas: " FS-CTAs
-                   STOP RUN.
-      
-                OPEN INPUT ESTADOS.
-                IF FS-EST NOT = ZERO
-                   DISPLAY "Error al abrir Estados: " FS-EST
-                   STOP RUN.
-      
-                OPEN OUTPUT MAESTRO.
-                OPEN OUTPUT LISTADO.
-                DISPLAY "ABRIR-ARCHIVOS FIN".
+        OPEN INPUT CONS1.
+        IF FS-CONS1 NOT = ZERO
+           DISPLAY "Error al abrir Consorcios 1: " FS-CONS1
+           STOP RUN.
+        OPEN INPUT CONS2.
+        IF FS-CONS2 NOT = ZERO
+           DISPLAY "Error al abrir Consorcios 2: " FS-CONS2
+           STOP RUN.
+        OPEN INPUT CONS3.
+        IF FS-CONS3 NOT = ZERO
+           DISPLAY "Error al abrir Consorcios 3: " FS-CONS3
+           STOP RUN.
+
+        OPEN INPUT CUENTAS.
+        IF FS-CTAs NOT = ZERO
+           DISPLAY "Error al abrir Cuentas: " FS-CTAs
+           STOP RUN.
+
+        OPEN INPUT ESTADOS.
+        IF FS-EST NOT = ZERO
+           DISPLAY "Error al abrir Estados: " FS-EST
+           STOP RUN.
+
+        OPEN OUTPUT MAESTRO.
+        OPEN OUTPUT LISTADO.
+        DISPLAY "ABRIR-ARCHIVOS FIN".
 
 	GEN-TABLA-ESTADOS.
 		DISPLAY "GEN-TABLA-ESTADOS".
 		PERFORM LEO-ESTADO.
-		PERFORM CARGAR-ESTADO VARYING WS_CONT_ESTADOS FROM 1 BY 1
-						UNTIL FS_EST = 10 OR WS_CONT_ESTADOS > 30.			
+		PERFORM CARGAR-ESTADO VARYING WS-CONT-ESTADOS FROM 1 BY 1 
+				UNTIL FS-EST = 10 OR WS-CONT-ESTADOS > 30.			
 		PERFORM ORDENAR-TABLA-ESTADOS.	
 		
 	CARGAR-ESTADO.
-		MOVE EST TO WS_TABLA_ESTADOS (WS_CONT_ESTADOS).
+		MOVE EST TO WS-TABLA-ESTADOS (WS-CONT-ESTADOS).
 		PERFORM LEO-ESTADO.
 		
 	LEO-ESTADO.
 		DISPLAY "LEO-ESTADO-INICIA".
-			READ ESTADOS.
-			IF FS_EST NOT = ZERO
-				DISPLAY "Error al leer Archivo de Estados: " FS_EST.
-				STOP RUN.			
+		READ ESTADOS.
+		IF FS-EST NOT = ZERO
+			DISPLAY "Error al leer Archivo de Estados: " FS-EST.
+			STOP RUN.			
 		
 	ORDENAR-TABLA-ESTADOS.
 		DISPLAY "ORDENAR TABLA ESTADOS".
       
-	 LEO-CONSORCIO-1.
+	LEO-CONSORCIO-1.
 		DISPLAY "LEO-CONSORCIOS INICIA".
-                READ CONS1.
-                IF FS-CONS1 NOT = ZERO
-                  DISPLAY "Error al leer Consorcios 1: " FS-CONS1
-                  STOP RUN.
+		READ CONS1.
+		IF FS-CONS1 NOT = ZERO
+			DISPLAY "Error al leer Consorcios 1: " FS-CONS1
+			STOP RUN.
                 
-        LEO-CONSORCIO-2.
-  		DISPLAY "LEO-CONSORCIOS INICIA".
-                READ CONS2.
-                IF FS-CONS2 NOT = ZERO
-                  DISPLAY "Error al leer Consorcios 2: " FS-CONS2
-                  STOP RUN.
-                
-        LEO-CONSORCIO-3.
-                DISPLAY "LEO-CONSORCIOS INICIA".
-                READ CONS3.
-                IF FS-CONS3 NOT = ZERO
-                  DISPLAY "Error al leer Consorcios 3: " FS-CONS3
-                  STOP RUN.    
-      
-        LEO-CUENTAS.
+    LEO-CONSORCIO-2.
+		DISPLAY "LEO-CONSORCIOS INICIA".
+        READ CONS2.
+        IF FS-CONS2 NOT = ZERO
+          DISPLAY "Error al leer Consorcios 2: " FS-CONS2
+          STOP RUN.
+            
+    LEO-CONSORCIO-3.
+        DISPLAY "LEO-CONSORCIOS INICIA".
+        READ CONS3.
+        IF FS-CONS3 NOT = ZERO
+          DISPLAY "Error al leer Consorcios 3: " FS-CONS3
+          STOP RUN.    
+  
+    LEO-CUENTAS.
 		DISPLAY "LEO-CUENTAS".
-                READ CUENTAS.
-                IF FS-CTAS NOT = ZERO
-                  DISPLAY "Error al leer cUENTas: " FS-CTAS
-                  STOP RUN.
+        READ CUENTAS.
+        IF FS-CTAS NOT = ZERO
+          DISPLAY "Error al leer cUENTas: " FS-CTAS
+          STOP RUN.
            	
 	OBTENER-ESTADO.
 		DISPLAY "OBTENER ESTADO".
@@ -261,25 +240,27 @@
 		DISPLAY "IMPRIMO-BAJAS".
 	CICLO-CONSORCIO.
 		DISPLAY "CICLO-CONSORCIO".
-                PERFORM DET-MENOR.
-                PERFORM POS-CUENTAS UNTIL FS-CTAS = '10' 
-                        OR CTA-CUIT-CONS >= WS-CONS-MENOR-CUIT-CONS. 
-                PERFORM POS-CONSORN1 UNTIL FS-CONS1 = '10' 
-                        OR REG-CONS1-CUIT-CONS IS NOT EQUAL 
-                        TO WS-CONS-MENOR-CUIT-CONS. 
-                PERFORM POS-CONSORN2 UNTIL FS-CONS2 = '10' 
-                        OR REG-CONS2-CUIT-CONS IS NOT EQUAL 
-                        TO WS-CONS-MENOR-CUIT-CONS. 
-                PERFORM POS-CONSORN3 UNTIL FS-CONS3 = '10' 
-                        OR REG-CONS3-CUIT-CONS IS NOT EQUAL 
-                        TO WS-CONS-MENOR-CUIT-CONS. 
-                PERFORM OBTENER-ESTADO.
-                IF WS-CONS-MENOR-ESTADO = '02'
-                   PERFORM LISTAR-BAJA
-                ELSE
-                   PERFORM ALTA-MAESTRO.
+        PERFORM DET-MENOR.
+        PERFORM POS-CUENTAS UNTIL FS-CTAS = '10' 
+                OR CTA-CUIT-CONS >= WS-CONS-MENOR-CUIT-CONS. 
+        PERFORM POS-CONSORN1 UNTIL FS-CONS1 = '10' 
+                OR REG-CONS1-CUIT-CONS IS NOT EQUAL 
+                TO WS-CONS-MENOR-CUIT-CONS. 
+        PERFORM POS-CONSORN2 UNTIL FS-CONS2 = '10' 
+                OR REG-CONS2-CUIT-CONS IS NOT EQUAL 
+                TO WS-CONS-MENOR-CUIT-CONS. 
+        PERFORM POS-CONSORN3 UNTIL FS-CONS3 = '10' 
+                OR REG-CONS3-CUIT-CONS IS NOT EQUAL 
+                TO WS-CONS-MENOR-CUIT-CONS. 
+        PERFORM OBTENER-ESTADO.
+        IF WS-CONS-MENOR-ESTADO = '02'
+           PERFORM LISTAR-BAJA
+        ELSE
+           PERFORM ALTA-MAESTRO.
+
 	MOSTRAR-ESTADISTICAS.
 		DISPLAY "MOSTRAR-ESTADISTICAS".
+
 	CERRAR-ARCHIVOS.
 		DISPLAY "CERRAR-ARCHIVOS".
 		CLOSE CONS1.
