@@ -107,7 +107,7 @@
 	77 CUIT-N1          PIC 9(15).
 	77 CUIT-N2          PIC 9(15).
 	77 CUIT-N3          PIC 9(15).
-	
+	77 WS-NRO-CTA-AUX   PIC 9(08).
 	77 cantConsorcios 	PIC 99 VALUE 0.
 	77 bajas 		PIC 99 VALUE 0.
 	77 cantLineas 		PIC 99 VALUE 0.
@@ -240,7 +240,7 @@
 		DISPLAY "LEO-CUENTAS".
                 READ CUENTAS.
                 IF FS-CTAS NOT = ZERO
-                  DISPLAY "Error al leer cUENTas: " FS-CTAS
+                  DISPLAY "Error al leer CUENTAS: " FS-CTAS
                   STOP RUN.
            	
 	OBTENER-ESTADO.
@@ -257,6 +257,9 @@
 	
 	IMPRIMO-ENCABEZADO.
 		DISPLAY "IMPRIMO-ENCABEZADO".
+      
+                ADD 1 TO cantHojas.
+      
 	IMPRIMO-BAJAS.
 		DISPLAY "IMPRIMO-BAJAS".
 	CICLO-CONSORCIO.
@@ -289,6 +292,46 @@
 		CLOSE ESTADOS.
 		CLOSE MAESTRO.
 		CLOSE LISTADO.
-
-
+        DET-MENOR.
+                DISPLAY "DET-MENOR".
+                MOVE REG-CONS1 TO WS-CONS-MENOR.
+                IF REG-CONS2-CUIT-CONS < WS-CONS-MENOR-CUIT-CONS
+                   MOVE REG-CONS2 TO WS-CONS-MENOR.
+                IF REG-CONS3-CUIT-CONS < WS-CONS-MENOR-CUIT-CONS
+                   MOVE REG-CONS3 TO WS-CONS-MENOR.
+        POS-CUENTAS.
+                DISPLAY "POS-CUENTAS".
+                PERFORM  LEO-CUENTAS.
+        POS-CONSORN1.
+                PERFORM GENERAR-ESTADISTICAS.
+                MOVE REG-CONS1 TO WS-CONS-MENOR.
+                PERFORM LEO-CONSORCIO-1.
+        POS-CONSORN2.
+                PERFORM GENERAR-ESTADISTICAS.
+                MOVE REG-CONS2 TO WS-CONS-MENOR.
+                PERFORM LEO-CONSORCIO-2.
+        POS-CONSORN3.
+                PERFORM GENERAR-ESTADISTICAS.
+                MOVE REG-CONS3 TO WS-CONS-MENOR.
+                PERFORM LEO-CONSORCIO-3.
+        LISTAR-BAJA.
+               IF cantLineas >= 60 
+                  PERFORM IMPRIMIR_ENCABEZADO.
+               PERFORM IMPRIMIR_BAJA.
+               ADD 1 TO bajas.
+        IMPRIMIR_BAJA.
+               DISPLAY "IMPRIMIR-BAJA".
+        ALTA-MAESTRO.
+               MOVE CTA-NRO-CTA TO WS-NRO-CTA-AUX.
+               IF WS-CONS-MENOR-CUIT-CONS NOT EQUAL TO CTA-CUIT-CONS
+                  MOVE 0 TO WS-NRO-CTA-AUX.
+               ADD 1 TO cantConsorcios.
+               MOVE WS-CONS-MENOR-FECHA-ALTA TO  MAE-FECHA-ALTA.
+               MOVE WS-DESCRIP-ESTADO TO MAE-DESCRIP-ESTADO.
+               MOVE WS-CONS-MENOR-NOMBRE-CONSORCIO TO MAE-NOMBRE-CONSORCIO.
+               MOVE WS-CONS-MENOR-TEL TO MAE-TEL.
+               MOVE WS-CONS-MENOR-DIR TO MAE-DIR.
+               MOVE WS-NRO-CTA-AUX TO  MAE-NRO-CTA.
+               WRITE MAE.
+      
 ----------------------------------------
