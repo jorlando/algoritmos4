@@ -92,6 +92,7 @@
 	FD LISTADO LABEL RECORD OMITTED.
 	01 LINEA                      PIC X(80).
 
+
 		WORKING-STORAGE SECTION.
 		77 FS-CONS1 		PIC XX.
 		77 FS-CONS2 		PIC XX.
@@ -124,28 +125,90 @@
 	    	03 CON-MENOR-TEL                PIC X(15).
 	    	03 CON-MENOR-DIR                PIC X(30).
 	    
-		01 TAB-ESTADOS.
+		 01 TAB-ESTADOS.
 			03 TAB-ESTADOS-ELM 
 					OCCURS 30 TIMES
 					ascending key TAB-ESTADOS-ESTADO
 					INDEXED BY IND.
 				05 TAB-ESTADOS-ESTADO PIC X(02).
 				05 TAB-ESTADOS-DESCRIP PIC X(15).
-
+        01 FECHA.
+           03 FECHA-AA    PIC 9(02).
+           03 FECHA-MM    PIC 9(02).
+           03 FECHA-DD    PIC 9(02).
+      
+        01 PE1-ENCABE.
+           03 FILLER PIC X(07) VALUE 'Fecha: '.
+           03 PE1-FECHA-DD PIC Z9.
+           03 FILLER       PIC X VALUE '/'.
+           03 PE1-FECHA-MM PIC 99.
+           03 FILLER       PIC X VALUE '/'.
+           03 PE1-FECHA-AA PIC 99.
+           03 FILLER       PIC X(61) VALUE 
+           '                                                Nro. Hoja: '
+           03 PE1-HOJA     PIC 9999 VALUE ZERO.
+      
+        01 PE2-ENCABE.
+           03 FILLER PIC X(80) VALUE ALL ' '.
+        
+        01 PE3-ENCABE.
+           03 FILLER   PIC X(25).
+           03 FILLER   PIC X(30) VALUE 'LISTADO DE CONSORCIOS DE BAJA'.
+           03 FILLER   PIC X(25).
+      
+        01 PB1-BAJA.
+           03 FILLER   PIC X(13) VALUE 'CUIT-CONS'.
+           03 FILLER   PIC X(13) VALUE 'FEC-ALTA'.
+           03 FILLER   PIC X(13) VALUE 'FEC-BAJA'.
+           03 FILLER   PIC X(13) VALUE 'NOMBRE'.
+           03 FILLER   PIC X(13) VALUE 'TELEFONO'.
+           03 FILLER   PIC X(13) VALUE 'DIRECCION'.
+      
+        01 PB2-BAJA.
+           03 PB2-BAJA-CUIT-CONS   PIC 9(15).
+           03 PB2-BAJA-FEC-ALTA    PIC X(10).
+           03 PB2-BAJAR-FEC-BAJA   PIC X(10).
+           03 PB2-BAJA-NOMBRE      PIC X(10).
+           03 PB2-BAJA-TELEFONO    PIC X(15).
+           03 PB2-BAJA-DIRECCION   PIC X(20).
+      
+        01 PB3-BAJA.
+           03 FILLER           PIC X(30) VALUE 'TOTAL DE NOVEDADES POR CUIT: '.
+           03 PB3-TOTAL-NOV    PIC 9999 VALUE ZERO.
+                
+        01 PB-FINAL.
+           03 FILLER         PIC X(40) VALUE 'Total de Consorcios dados de baja: '.
+           03 PB-FINAL-TOTAL PIC 9999 VALUE ZERO.
+      
 		PROCEDURE DIVISION.
-			perform ABRIR-ARCHIVOS.
-			perform GEN-TABLA-ESTADOS.
-			perform LEO-CONSORCIO-1.
+			    perform INICIALIZAR.
+          perform ABRIR-ARCHIVOS.
+			    perform GEN-TABLA-ESTADOS.
+			    perform LEO-CONSORCIO-1.
 	        perform LEO-CONSORCIO-2.
 	        perform LEO-CONSORCIO-3.
-			perform LEO-CUENTAS.
-			perform IMPRIMO-ENCABEZADO.
-			perform CICLO-CONSORCIO.
-			perform IMPRIMO-BAJAS.
-			perform MOSTRAR-ESTADISTICAS.
-			perform CERRAR-ARCHIVOS.
+		    	perform LEO-CUENTAS.
+			    perform IMPRIMO-ENCABEZADO.
+			    perform CICLO-CONSORCIO.
+			    perform IMPRIMO-BAJAS-FIN.
+			    perform MOSTRAR-ESTADISTICAS.
+			    perform CERRAR-ARCHIVOS.
 		STOP RUN.
-	      
+	  
+    INICIALIZAR.
+		            DISPLAY "INICIALIZAR INICIA".
+                MOVE 0 TO cantCons1.
+                MOVE 0 TO cantCons2.
+                MOVE 0 TO cantCons3.
+                MOVE 0 TO bajas.
+                MOVE 1 TO cantHojas.
+                MOVE 0 TO CONT-ANIO.
+                ACCEPT FECHA FROM DATE.
+                MOVE FECHA-AA TO PE1-FECHA-AA.
+                MOVE FECHA-MM TO PE1-FECHA-MM.
+                MOVE FECHA-DD TO PE1-FECHA-DD.
+                DISPLAY "INICIALIZAR FIN".
+      
 		ABRIR-ARCHIVOS.
 			DISPLAY "ABRIR-ARCHIVOS INICIA".
 	        OPEN INPUT CONS1.
@@ -203,7 +266,7 @@
 			IF FS-CONS1 NOT = ZERO
 				DISPLAY "Err leer consorcios1 " FS-CONS1
 				STOP RUN.
-                
+
 	    LEO-CONSORCIO-2.
 			DISPLAY "LEO-CONSORCIOS INICIA".
 	        READ CONS2.
@@ -238,9 +301,35 @@
 		MOVE TAB-ESTADOS-DESCRIP(IND) TO WS-DESCRIP-ESTADO.
 		
 		IMPRIMO-ENCABEZADO.
-			DISPLAY "IMPRIMO-ENCABEZADO".
-		IMPRIMO-BAJAS.
-			DISPLAY "IMPRIMO-BAJAS".
+                MOVE cantHojas TO PE1-HOJA.
+		            WRITE LINEA FROM PE1-ENCABE.
+                WRITE LINEA FROM PE2-ENCABE.
+                WRITE LINRA FROM PE3-ENCABE.
+                WRITE LINEA FROM PE2-ENCABE.
+                ADD 1 TO cantHojas.
+                MOVE 4 TO cantLineas.
+     LISTAR-BAJA.
+               IF cantLineas >= 60 
+                  PERFORM IMPRIMIR_ENCABEZADO.
+               PERFORM IMPRIMIR_BAJA.
+               ADD 1 TO bajas.
+        IMPRIMIR_BAJA-FIN.
+               DISPLAY "IMPRIMIR-BAJA".
+               MOVE bajas TP PF-FINAL-TOTAL.
+               WRITE LINEA FROM PB-FINAL. 
+	  IMPRIMIR-BAJA.
+		            DISPLAY "IMPRIMO-BAJAS".
+                WRITE LINEA FROM PB1-ENCABE.
+                MOVE WS-CONS-MENOR-CUIT-CONS TO PB2-BAJA-CUIT-CONS.
+                MOVE WS-CONS-MENOR-FECHA-ALTA TO PB2-BAJA-FEC-ALTA.
+                MOVE WS-CONS-MENOR-FECHA-BAJA TO PB2-BAJAR-FEC-BAJA.
+                MOVE WS-CONS-MENOR-NOMBRE-CONSORCIO TO PB2-BAJA-NOMBRE.
+                MOVE WS-CONS-MENOR-TEL TO PB2-BAJA-TELEFONO.
+                MOVE PB2-BAJA-DIRECCION TO PB2-BAJA-DIRECCION.
+                WRITE LINEA FROM PB2-ENCABE.
+                WRITE LINRA FROM PB3-ENCABE.
+                WRITE LINEA FROM PE2-ENCABE.
+                ADD 4 TO cantLineas.
 		CICLO-CONSORCIO.
 			DISPLAY "CICLO-CONSORCIO".
 	        PERFORM DET-MENOR.
@@ -274,17 +363,41 @@
 			CLOSE MAESTRO.
 			CLOSE LISTADO.
 
-		DET-MENOR.
-			DISPLAY "DET-MENOR".
-		POS-CUENTAS.
-			DISPLAY "POS-CUENTAS".
-		POS-CONSORN1.
-			DISPLAY "POS-CONSORN1".
-		POS-CONSORN2.
-			DISPLAY "POS-CONSORN2".
-		POS-CONSORN3.
-			DISPLAY "POS-CONSORN3".
-		LISTAR-BAJA.
-			DISPLAY "LISTAR-BAJA".
-		ALTA-MAESTRO.
-			DISPLAY "ALTA-MAESTRO".
+		 DET-MENOR.
+                DISPLAY "DET-MENOR".
+                MOVE REG-CONS1 TO WS-CONS-MENOR.
+                IF REG-CONS2-CUIT-CONS < WS-CONS-MENOR-CUIT-CONS
+                   MOVE REG-CONS2 TO WS-CONS-MENOR.
+                IF REG-CONS3-CUIT-CONS < WS-CONS-MENOR-CUIT-CONS
+                   MOVE REG-CONS3 TO WS-CONS-MENOR.
+        POS-CUENTAS.
+                DISPLAY "POS-CUENTAS".
+                PERFORM  LEO-CUENTAS.
+        POS-CONSORN1.
+                PERFORM GENERAR-ESTADISTICAS.
+                MOVE REG-CONS1 TO WS-CONS-MENOR.
+                PERFORM LEO-CONSORCIO-1.
+        POS-CONSORN2.
+                PERFORM GENERAR-ESTADISTICAS.
+                MOVE REG-CONS2 TO WS-CONS-MENOR.
+                PERFORM LEO-CONSORCIO-2.
+        POS-CONSORN3.
+                PERFORM GENERAR-ESTADISTICAS.
+                MOVE REG-CONS3 TO WS-CONS-MENOR.
+                PERFORM LEO-CONSORCIO-3.
+		
+	    	ALTA-MAESTRO.
+               MOVE CTA-NRO-CTA TO WS-NRO-CTA-AUX.
+               IF WS-CONS-MENOR-CUIT-CONS NOT EQUAL 
+                                   TO CTA-CUIT-CONS
+                  MOVE 0 TO WS-NRO-CTA-AUX.
+               ADD 1 TO cantConsorcios.
+               MOVE WS-CONS-MENOR-FECHA-ALTA TO  MAE-FECHA-ALTA.
+               MOVE WS-DESCRIP-ESTADO TO MAE-DESCRIP-ESTADO.
+               MOVE WS-CONS-MENOR-NOMBRE-CONSORCIO 
+                    TO MAE-NOMBRE-CONSORCIO.
+               MOVE WS-CONS-MENOR-TEL TO MAE-TEL.
+               MOVE WS-CONS-MENOR-DIR TO MAE-DIR.
+               MOVE WS-NRO-CTA-AUX TO  MAE-NRO-CTA.
+               WRITE MAE.
+
