@@ -148,20 +148,20 @@
 			DISPLAY "ABRIR-ARCHIVOS INICIA".
 	        OPEN INPUT CONS1.
 	        IF FS-CONS1 NOT = ZERO
-	           DISPLAY "Error al abrir Consorcios 1: " FS-CONS1
+	           DISPLAY "Err abrir Consorcios1: " FS-CONS1
 	           STOP RUN.
 	        OPEN INPUT CONS2.
 	        IF FS-CONS2 NOT = ZERO
-	           DISPLAY "Error al abrir Consorcios 2: " FS-CONS2
+	           DISPLAY "Err abrir Consorcios2: " FS-CONS2
 	           STOP RUN.
 	        OPEN INPUT CONS3.
 	        IF FS-CONS3 NOT = ZERO
-	           DISPLAY "Error al abrir Consorcios 3: " FS-CONS3
+	           DISPLAY "Err abrir Consorcios3: " FS-CONS3
 	           STOP RUN.
 
 	        OPEN INPUT CUENTAS.
-	        IF FS-CTAs NOT = ZERO
-	           DISPLAY "Error al abrir Cuentas: " FS-CTAs
+	        IF FS-CTAS NOT = ZERO
+	           DISPLAY "Error al abrir Cuentas: " FS-CTAS
 	           STOP RUN.
 
 	        OPEN INPUT ESTADOS.
@@ -199,7 +199,7 @@
 			DISPLAY "LEO-CONSORCIOS INICIA".
 			READ CONS1.
 			IF FS-CONS1 NOT = ZERO
-				DISPLAY "Err leer consorcios1: " FS-CONS1
+				DISPLAY "Err leer consorcios1 ", FS-CONS1
 				STOP RUN.
                 
 	    LEO-CONSORCIO-2.
