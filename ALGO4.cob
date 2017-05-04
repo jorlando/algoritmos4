@@ -94,9 +94,6 @@
         01 LINEA                      PIC X(80).
 
 	WORKING-STORAGE SECTION.
-
-      
-      
 	77 FS-CONS1 PIC XX.
 	77 FS-CONS2 PIC XX.
 	77 FS-CONS3 PIC XX.
@@ -139,7 +136,57 @@
 	77 CONS3_EOF		PIC XX VALUE "NO".
 	77 CONS_EOF			PIC XX VALUE "NO".
 	   88 EOF 				   VALUE "SI".
-
+       
+        01 FECHA.
+           03 FECHA-AA    PIC 9(02).
+           03 FECHA-MM    PIC 9(02).
+           03 FECHA-DD    PIC 9(02).
+      
+        01 PE1-ENCABE.
+           03 FILLER PIC X(07) VALUE 'Fecha: '.
+           03 PE1-FECHA-DD PIC Z9.
+           03 FILLER       PIC X VALUE '/'.
+           03 PE1-FECHA-MM PIC 99.
+           03 FILLER       PIC X VALUE '/'.
+           03 PE1-FECHA-AA PIC 99.
+           03 FILLER       PIC X(61) VALUE 
+           '                                                Nro. Hoja: '
+           03 PE1-HOJA     PIC 9999 VALUE ZERO.
+      
+        01 PE2-ENCABE.
+           03 FILLER PIC X(80) VALUE ALL ' '.
+        
+        01 PE3-ENCABE.
+           03 FILLER   PIC X(25).
+           03 FILLER   PIC X(30) VALUE 'LISTADO DE CONSORCIOS DE BAJA'.
+           03 FILLER   PIC X(25).
+      
+      9(15)               99/99/99    99/99/99      XXXXXX    XXXXXXXX   XXXXXXXX
+      
+        01 PB1-BAJA.
+           03 FILLER   PIC X(13) VALUE 'CUIT-CONS'.
+           03 FILLER   PIC X(13) VALUE 'FEC-ALTA'.
+           03 FILLER   PIC X(13) VALUE 'FEC-BAJA'.
+           03 FILLER   PIC X(13) VALUE 'NOMBRE'.
+           03 FILLER   PIC X(13) VALUE 'TELEFONO'.
+           03 FILLER   PIC X(13) VALUE 'DIRECCION'.
+      
+        01 PB2-BAJA.
+           03 PB2-BAJA-CUIT-CONS   PIC 9(15).
+           03 PB2-BAJA-FEC-ALTA    PIC X(10).
+           03 PB2-BAJAR-FEC-BAJA   PIC X(10).
+           03 PB2-BAJA-NOMBRE      PIC X(10).
+           03 PB2-BAJA-TELEFONO    PIC X(15).
+           03 PB2-BAJA-DIRECCION   PIC X(20).
+      
+        01 PB3-BAJA.
+           03 FILLER           PIC X(30) VALUE 'TOTAL DE NOVEDADES POR CUIT: '.
+           03 PB3-TOTAL-NOV    PIC 9999 VALUE ZERO.
+                
+        01 PB-FINAL.
+           03 FILLER         PIC X(40) VALUE 'Total de Consorcios dados de baja: '.
+           03 PB-FINAL-TOTAL PIC 9999 VALUE ZERO.
+                 
 	PROCEDURE DIVISION.
 		perform INICIALIZAR.
       	        perform ABRIR-ARCHIVOS.
@@ -163,6 +210,10 @@
                 MOVE 0 TO bajas.
                 MOVE 1 TO cantHojas.
                 MOVE 0 TO CONT-ANIO.
+                ACCEPT FECHA FROM DATE.
+                MOVE FECHA-AA TO PE1-FECHA-AA.
+                MOVE FECHA-MM TO PE1-FECHA-MM.
+                MOVE FECHA-DD TO PE1-FECHA-DD.
                 DISPLAY "INICIALIZAR FIN".
       
 	ABRIR-ARCHIVOS.
@@ -256,12 +307,28 @@
 		MOVE WS_TABLA_ESTADOS_DESCRIP TO WS_DESCRIP_ESTADO.	
 	
 	IMPRIMO-ENCABEZADO.
-		DISPLAY "IMPRIMO-ENCABEZADO".
-      
+                MOVE cantHojas TO PE1-HOJA.
+		WRITE LINEA FROM PE1-ENCABE.
+                WRITE LINEA FROM PE2-ENCABE.
+                WRITE LINRA FROM PE3-ENCABE.
+                WRITE LINEA FROM PE2-ENCABE.
                 ADD 1 TO cantHojas.
+                MOVE 4 TO cantLineas.
       
-	IMPRIMO-BAJAS.
+	LISTAR-BAJA.
 		DISPLAY "IMPRIMO-BAJAS".
+                WRITE LINEA FROM PB1-ENCABE.
+                MOVE WS-CONS-MENOR-CUIT-CONS TO PB2-BAJA-CUIT-CONS.
+                MOVE WS-CONS-MENOR-FECHA-ALTA TO PB2-BAJA-FEC-ALTA.
+                MOVE WS-CONS-MENOR-FECHA-BAJA TO PB2-BAJAR-FEC-BAJA.
+                MOVE WS-CONS-MENOR-NOMBRE-CONSORCIO TO PB2-BAJA-NOMBRE.
+                MOVE WS-CONS-MENOR-TEL TO PB2-BAJA-TELEFONO.
+                MOVE PB2-BAJA-DIRECCION TO PB2-BAJA-DIRECCION.
+                WRITE LINEA FROM PB2-ENCABE.
+                WRITE LINRA FROM PB3-ENCABE.
+                WRITE LINEA FROM PE2-ENCABE.
+                ADD 4 TO cantLineas.
+          
 	CICLO-CONSORCIO.
 		DISPLAY "CICLO-CONSORCIO".
                 PERFORM DET-MENOR.
@@ -319,16 +386,20 @@
                   PERFORM IMPRIMIR_ENCABEZADO.
                PERFORM IMPRIMIR_BAJA.
                ADD 1 TO bajas.
-        IMPRIMIR_BAJA.
+        IMPRIMIR_BAJAS.
                DISPLAY "IMPRIMIR-BAJA".
+               MOVE bajas TP PF-FINAL-TOTAL.
+               WRITE LINEA FROM PB-FINAL.
         ALTA-MAESTRO.
                MOVE CTA-NRO-CTA TO WS-NRO-CTA-AUX.
-               IF WS-CONS-MENOR-CUIT-CONS NOT EQUAL TO CTA-CUIT-CONS
+               IF WS-CONS-MENOR-CUIT-CONS NOT EQUAL 
+                                   TO CTA-CUIT-CONS
                   MOVE 0 TO WS-NRO-CTA-AUX.
                ADD 1 TO cantConsorcios.
                MOVE WS-CONS-MENOR-FECHA-ALTA TO  MAE-FECHA-ALTA.
                MOVE WS-DESCRIP-ESTADO TO MAE-DESCRIP-ESTADO.
-               MOVE WS-CONS-MENOR-NOMBRE-CONSORCIO TO MAE-NOMBRE-CONSORCIO.
+               MOVE WS-CONS-MENOR-NOMBRE-CONSORCIO 
+                    TO MAE-NOMBRE-CONSORCIO.
                MOVE WS-CONS-MENOR-TEL TO MAE-TEL.
                MOVE WS-CONS-MENOR-DIR TO MAE-DIR.
                MOVE WS-NRO-CTA-AUX TO  MAE-NRO-CTA.
