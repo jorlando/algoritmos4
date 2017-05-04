@@ -145,7 +145,7 @@
            03 FILLER       PIC X VALUE '/'.
            03 PE1-FECHA-AA PIC 99.
            03 FILLER       PIC X(61) VALUE 
-           '                                                Nro. Hoja: '
+           '                                  Nro. Hoja: '.
            03 PE1-HOJA     PIC 9999 VALUE ZERO.
       
         01 PE2-ENCABE.
@@ -173,11 +173,13 @@
            03 PB2-BAJA-DIRECCION   PIC X(20).
       
         01 PB3-BAJA.
-           03 FILLER           PIC X(30) VALUE 'TOTAL DE NOVEDADES POR CUIT: '.
+           03 F PIC X(26)
+           		VALUE 'TOTAL NOVEDADES POR CUIT: '.
            03 PB3-TOTAL-NOV    PIC 9999 VALUE ZERO.
                 
         01 PB-FINAL.
-           03 FILLER         PIC X(40) VALUE 'Total de Consorcios dados de baja: '.
+           03 F PIC X(35) 
+           	  VALUE 'Total de Consorcios dados de baja: '.
            03 PB-FINAL-TOTAL PIC 9999 VALUE ZERO.
       
 		PROCEDURE DIVISION.
@@ -195,8 +197,8 @@
 			    perform CERRAR-ARCHIVOS.
 		STOP RUN.
 	  
-    INICIALIZAR.
-		            DISPLAY "INICIALIZAR INICIA".
+       INICIALIZAR.
+		        DISPLAY "INICIALIZAR INICIA".
                 MOVE 0 TO cantCons1.
                 MOVE 0 TO cantCons2.
                 MOVE 0 TO cantCons3.
@@ -302,13 +304,13 @@
 		
 		IMPRIMO-ENCABEZADO.
                 MOVE cantHojas TO PE1-HOJA.
-		            WRITE LINEA FROM PE1-ENCABE.
+		        WRITE LINEA FROM PE1-ENCABE.
                 WRITE LINEA FROM PE2-ENCABE.
                 WRITE LINRA FROM PE3-ENCABE.
                 WRITE LINEA FROM PE2-ENCABE.
                 ADD 1 TO cantHojas.
                 MOVE 4 TO cantLineas.
-     LISTAR-BAJA.
+       LISTAR-BAJA.
                IF cantLineas >= 60 
                   PERFORM IMPRIMIR_ENCABEZADO.
                PERFORM IMPRIMIR_BAJA.
