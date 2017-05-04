@@ -306,7 +306,7 @@
                 MOVE cantHojas TO PE1-HOJA.
 		        WRITE LINEA FROM PE1-ENCABE.
                 WRITE LINEA FROM PE2-ENCABE.
-                WRITE LINRA FROM PE3-ENCABE.
+                WRITE LINEA FROM PE3-ENCABE.
                 WRITE LINEA FROM PE2-ENCABE.
                 ADD 1 TO cantHojas.
                 MOVE 4 TO cantLineas.
@@ -317,7 +317,7 @@
                ADD 1 TO bajas.
         IMPRIMIR_BAJA-FIN.
                DISPLAY "IMPRIMIR-BAJA".
-               MOVE bajas TP PF-FINAL-TOTAL.
+               MOVE bajas TO PB-FINAL-TOTAL.
                WRITE LINEA FROM PB-FINAL. 
 	  IMPRIMIR-BAJA.
 		            DISPLAY "IMPRIMO-BAJAS".
