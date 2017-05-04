@@ -189,7 +189,7 @@
 			DISPLAY "LEO-ESTADO-INICIA".
 			READ ESTADOS.
 			IF FS-EST NOT = ZERO
-				DISPLAY "Error al leer Estados: " FS-EST.
+				DISPLAY "Error al leer Estados: " FS-EST
 				STOP RUN.			
 			
 		ORDENAR-TABLA-ESTADOS.
@@ -199,7 +199,7 @@
 			DISPLAY "LEO-CONSORCIOS INICIA".
 			READ CONS1.
 			IF FS-CONS1 NOT = ZERO
-				DISPLAY "Err leer consorcios1 ", FS-CONS1
+				DISPLAY "Err leer consorcios1 " FS-CONS1
 				STOP RUN.
                 
 	    LEO-CONSORCIO-2.
