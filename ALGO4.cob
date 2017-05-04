@@ -32,38 +32,38 @@
 			LABEL RECORD IS STANDARD
 			VALUE OF FILE-ID IS "cons1.dat".
 			 
-	01 CONS.	
-	   03 CONS-CUIT-CONS          PIC 9(15).
-	   03 CONS-FECHA-ALTA         PIC X(10).
-	   03 CONS-FECHA-BAJA         PIC X(10).
-	   03 CONS-ESTADO             PIC 9(02).
-	   03 CONS-NOMBRE-CONSORCIO   PIC X(30).
-	   03 CONS-TEL                PIC X(15).
-	   03 CONS-DIR                PIC X(30).
+	01 CONS_1.	
+	   03 CONS_1-CUIT-CONS          PIC 9(15).
+	   03 CONS_1-FECHA-ALTA         PIC X(10).
+	   03 CONS_1-FECHA-BAJA         PIC X(10).
+	   03 CONS_1-ESTADO             PIC 9(02).
+	   03 CONS_1-NOMBRE-CONSORCIO   PIC X(30).
+	   03 CONS_1-TEL                PIC X(15).
+	   03 CONS_1-DIR                PIC X(30).
 
 	FD CONS2
 			LABEL RECORD IS STANDARD
 			VALUE OF FILE-ID IS "cons2.dat".
-	01 CONS.	
-	   03 CONS-CUIT-CONS          PIC 9(15).
-	   03 CONS-FECHA-ALTA         PIC X(10).
-	   03 CONS-FECHA-BAJA         PIC X(10).
-	   03 CONS-ESTADO             PIC 9(02).
-	   03 CONS-NOMBRE-CONSORCIO   PIC X(30).
-	   03 CONS-TEL                PIC X(15).
-	   03 CONS-DIR                PIC X(30).
+	01 CONS_2.	
+	   03 CONS_2-CUIT-CONS          PIC 9(15).
+	   03 CONS_2-FECHA-ALTA         PIC X(10).
+	   03 CONS_2-FECHA-BAJA         PIC X(10).
+	   03 CONS_2-ESTADO             PIC 9(02).
+	   03 CONS_2-NOMBRE-CONSORCIO   PIC X(30).
+	   03 CONS_2-TEL                PIC X(15).
+	   03 CONS_2-DIR                PIC X(30).
 
 	FD CONS3
 			LABEL RECORD IS STANDARD
 			VALUE OF FILE-ID IS "cons3.dat".
-	01 CONS.	
-	   03 CONS-CUIT-CONS          PIC 9(15).
-	   03 CONS-FECHA-ALTA         PIC X(10).
-	   03 CONS-FECHA-BAJA         PIC X(10).
-	   03 CONS-ESTADO             PIC 9(02).
-	   03 CONS-NOMBRE-CONSORCIO   PIC X(30).
-	   03 CONS-TEL                PIC X(15).
-	   03 CONS-DIR                PIC X(30).
+	01 CONS_3.	
+	   03 CONS_3-CUIT-CONS          PIC 9(15).
+	   03 CONS_3-FECHA-ALTA         PIC X(10).
+	   03 CONS_3-FECHA-BAJA         PIC X(10).
+	   03 CONS_3-ESTADO             PIC 9(02).
+	   03 CONS_3-NOMBRE-CONSORCIO   PIC X(30).
+	   03 CONS_3-TEL                PIC X(15).
+	   03 CONS_3-DIR                PIC X(30).
 
 	FD CUENTAS LABEL RECORD IS STANDARD
 	           VALUE OF FILE-ID IS "cuentas.dat".
