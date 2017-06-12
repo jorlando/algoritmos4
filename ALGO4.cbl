@@ -96,8 +96,9 @@
 	   03 MAE-DIR                     PIC X(30).
 	   03 MAE-NRO-CTA                 PIC 9(08).
 	
-       FD LISTADO LABEL RECORD OMITTED.
-       
+       FD LISTADO LABEL RECORD IS STANDARD
+                  VALUE OF FILE-ID IS 
+                  "C:\consor\lisBajas".
        01 LINEA                           PIC X(80).
 
 
@@ -133,9 +134,7 @@
        77 bajas 			PIC 99 VALUE 0.
        77 cantLineas 			PIC 99 VALUE 0.
        77 cantHojas 			PIC 99 VALUE 1.
-       77 cantCons1 			PIC 99 VALUE 0.
-       77 cantCons2 			PIC 99 VALUE 0.
-       77 cantCons3 			PIC 99 VALUE 0.
+       77 cantRegmC 			PIC 99 VALUE 0.
        77 CANTESTADOS 			PIC 99 VALUE 0.
        77 CONT-ANIO 			PIC 99 VALUE 0.
        77 I                    PIC 99.
@@ -365,9 +364,6 @@
 
        INICIALIZAR.
            DISPLAY "INICIALIZAR INICIA".
-           MOVE 0 TO cantCons1.
-           MOVE 0 TO cantCons2.
-           MOVE 0 TO cantCons3.
            MOVE 0 TO bajas.
            MOVE 1 TO cantHojas.
            MOVE 0 TO CONT-ANIO.
@@ -510,8 +506,9 @@
            MOVE CON-MENOR-FECHA-BAJA TO PB2-BAJAR-FEC-BAJA.
            MOVE CON-MENOR-NOMBRE-CONSORCIO TO PB2-BAJA-NOMBRE.
            MOVE CON-MENOR-TEL TO PB2-BAJA-TELEFONO.
-           MOVE PB2-BAJA-DIRECCION TO PB2-BAJA-DIRECCION.
+           MOVE CON-MENOR-DIR TO PB2-BAJA-DIRECCION.
            WRITE LINEA FROM PB2-BAJA.
+           MOVE cantRegmC TO PB3-TOTAL-NOV.
            WRITE LINEA FROM PB3-BAJA.
            WRITE LINEA FROM PE2-ENCABE.
            ADD 4 TO cantLineas.
@@ -519,6 +516,7 @@
        CICLO-CONSORCIO.
            DISPLAY "CICLO-CONSORCIO".
            PERFORM DET-MENOR.
+           MOVE 1 TO cantRegmC.
            PERFORM POS-CUENTAS UNTIL FS-CTAS = 10 
                    OR CTA-CUIT-CONS >= CON-MENOR-CUIT-CONS. 
            PERFORM POS-CONSORN1 UNTIL FS-CONS1 = 10 
@@ -647,30 +645,36 @@
            MOVE REG-CONS1-FECHA-ALTA TO FEC-ESTADISTICA.
            MOVE REG-CONS1-ESTADO TO EST-ACTUAL.
            PERFORM GENERAR-ESTADISTICAS.
-           MOVE REG-CONS1 TO CON-MENOR.
+      *     MOVE REG-CONS1 TO CON-MENOR.
            PERFORM LEO-CONSORCIO-1.
            IF FS-CONS1 = 10 
-              MOVE 999999999999999 TO REG-CONS1-CUIT-CONS.           
+              MOVE 999999999999999 TO REG-CONS1-CUIT-CONS.
+           IF REG-CONS1-CUIT-CONS = CON-MENOR-CUIT-CONS 
+              ADD 1 TO cantRegmC.           
         
        POS-CONSORN2.
            DISPLAY "Estoy en POS-CONSORN2".
            MOVE REG-CONS2-FECHA-ALTA TO FEC-ESTADISTICA.
            MOVE REG-CONS2-ESTADO TO EST-ACTUAL.
            PERFORM GENERAR-ESTADISTICAS.
-           MOVE REG-CONS2 TO CON-MENOR.
+      *     MOVE REG-CONS2 TO CON-MENOR.
            PERFORM LEO-CONSORCIO-2.
            IF FS-CONS2 = 10 
               MOVE 999999999999999 TO REG-CONS2-CUIT-CONS.
+           IF REG-CONS2-CUIT-CONS = CON-MENOR-CUIT-CONS 
+              ADD 1 TO cantRegmC.
         
        POS-CONSORN3.
            MOVE REG-CONS3-FECHA-ALTA TO FEC-ESTADISTICA.
            MOVE REG-CONS3-ESTADO TO EST-ACTUAL.
            PERFORM GENERAR-ESTADISTICAS.
-           MOVE REG-CONS3 TO CON-MENOR.
+      *     MOVE REG-CONS3 TO CON-MENOR.
            PERFORM LEO-CONSORCIO-3.
            IF FS-CONS3 = 10 
               MOVE 999999999999999 TO REG-CONS3-CUIT-CONS.
-		
+           IF REG-CONS3-CUIT-CONS = CON-MENOR-CUIT-CONS 
+              ADD 1 TO cantRegmC.
+	
        ALTA-MAESTRO.
            DISPLAY "ALTA MAESTRO".
            MOVE CTA-NRO-CTA TO WS-NRO-CTA-AUX.
