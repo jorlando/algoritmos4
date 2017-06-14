@@ -26,6 +26,9 @@
            SELECT LISTADO ASSIGN TO DISK
                                 ORGANIZATION IS LINE SEQUENTIAL
                                 FILE STATUS IS FS-LIST.
+           SELECT ESTADIST ASSIGN TO DISK
+                                ORGANIZATION IS LINE SEQUENTIAL
+                                FILE STATUS IS FS-ESTAD.
        DATA DIVISION.
        FILE SECTION.
        FD CONS1 	LABEL RECORD IS STANDARD
@@ -101,6 +104,10 @@
                   "C:\consor\lisBajas".
        01 LINEA                           PIC X(80).
 
+       FD ESTADIST LABEL RECORD IS STANDARD
+                  VALUE OF FILE-ID IS 
+                  "C:\consor\Estadist".
+       01 LINEA-E                         PIC X(125).
 
        WORKING-STORAGE SECTION.
        77 WS-NRO-CTA-AUX PIC 9(8).
@@ -126,6 +133,7 @@
           88 FS-EST-INVALID-KEY    VALUE '23'.       
        77 FS-MAE		PIC XX.
        77 FS-LIST		PIC XX.
+       77 FS-ESTAD              PIC XX.
        77 CUIT-N1               PIC 9(15).
        77 CUIT-N2               PIC 9(15).
        77 CUIT-N3               PIC 9(15).
@@ -141,6 +149,8 @@
        77 J                    PIC 99.
        77 IND2                 PIC 99.
        77 MAX-EST			PIC 99 VALUE 30.
+       77 CAN-EST                       PIC 99 VALUE 0.
+       77 EST-OK               PIC XX.
        77 ENCONTRADO			PIC X(02).
        77 ANIO-ESTADISTICA     PIC X(04).
        77 EXISTE-ESTADISTICA   PIC X(02).
@@ -174,8 +184,11 @@
                          OCCURS 30 TIMES
                          ascending key TAB-ESTADOS-ESTADO
                          INDEXED BY IND.
-                                05 TAB-ESTADOS-ESTADO PIC 9(02).
-                                05 TAB-ESTADOS-DESCRIP PIC X(15).
+                                05 TAB-ESTADOS-ESTADO PIC 9(02) 
+                                                      VALUE 99.
+                                05 TAB-ESTADOS-DESCRIP PIC X(15)
+                                       VALUE 'ZZZZZZZZZZZZZZZ'.
+       01 MIERDA         PIC 9(02).
        01 FECHA.
           03 FECHA-AA    PIC 9(02).
           03 FECHA-MM    PIC 9(02).
@@ -236,114 +249,157 @@
           03 FILLER PIC X(2) VALUE '  '.
           03 FILLER PIC X(7) VALUE 'ESTADOS'.
           03 FILLER PIC X(67) VALUE ALL ' '.
-		   
+
+       01 EST-ENCABEZADO-L.
+          03 FILLER PIC X(80) VALUE ALL '-'.		   
+
+       01 EST-ENCABEZADO-4.
+          03 FILLER PIC X(4) VALUE ALL ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-01 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-02 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-03 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-04 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-05 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-06 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-07 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-08 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-09 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-10 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-11 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-12 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-13 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-14 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-15 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-16 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-17 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-18 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-19 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-20 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-21 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-22 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-23 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-24 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-25 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-26 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-27 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-28 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-29 PIC X(2).
+          03 FILLER PIC X(2) VALUE ' |'.
+          03 E-30 PIC X(2).
+          03 FILLER PIC X VALUE '|'.
 		
        01 LINEA-ESTADISTICA.
           03 L-ANIO PIC X(4).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-01 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-02 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-03 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-04 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-05 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-06 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-07 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-08 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-09 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-10 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-11 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-12 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-13 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-14 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-15 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-16 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-17 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-18 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-19 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-20 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-21 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-22 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-23 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-24 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-25 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-26 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-27 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-28 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-29 PIC X(2).
-          03 FILLER PIC X(2) VALUE ' '.
+          03 FILLER PIC X(2) VALUE ' |'.
           03 L-EST-30 PIC X(2).
+          03 FILLER PIC X VALUE '|'.
        
        PROCEDURE DIVISION.
-       DECLARATIVES. 
-       DC-EST SECTION. 
-       USE AFTER STANDARD ERROR PROCEDURE ON ESTADOS. 
-       DC-EST-10. 
-           IF NOT FS-EST-PERMITTED 
-              DISPLAY 'ERROR ON FILE INFILE, STATUS ' FS-EST 
-              STOP RUN. 
-       DC-EST-EXIT. 
-           EXIT. 
-       DC-CONS1 SECTION. 
-       USE AFTER STANDARD ERROR PROCEDURE ON CONS1. 
-       DC-CONS1-10. 
-           IF NOT FS-CONS1-PERMITTED 
-              DISPLAY 'ERROR ON FILE INFILE, STATUS ' FS-CONS1 
-              STOP RUN. 
-       DC-CONS1-EXIT. 
-           EXIT. 
-       DC-CONS2 SECTION. 
-       USE AFTER STANDARD ERROR PROCEDURE ON CONS2. 
-       DC-CONS2-10. 
-           IF NOT FS-CONS2-PERMITTED 
-              DISPLAY 'ERROR ON FILE INFILE, STATUS ' FS-CONS2 
-              STOP RUN. 
-       DC-CONS2-EXIT. 
-           EXIT. 
-       DC-CONS3 SECTION. 
-       USE AFTER STANDARD ERROR PROCEDURE ON CONS3. 
-       DC-CONS3-10. 
-           IF NOT FS-CONS3-PERMITTED 
-              DISPLAY 'ERROR ON FILE INFILE, STATUS ' FS-CONS3 
-              STOP RUN. 
-       DC-CONS3-EXIT. 
-           EXIT. 
-       DC-CUENTAS SECTION.
-       USE AFTER STANDARD ERROR PROCEDURE ON CUENTAS. 
-       DC-CUENTAS-10. 
-           IF NOT FS-CTAS-PERMITTED 
-             DISPLAY 'ERROR ON FILE INFILE, STATUS ' FS-CTAS 
-             STOP RUN. 
-       DC-CUENTAS-EXIT. 
-           EXIT. 
-       END DECLARATIVES. 
+       DECLARATIVES.
+       DECLAR-INPUT SECTION.
+       USE AFTER ERROR PROCEDURE ON INPUT.
+       CONTINUE-INPUT.
+           CONTINUE.
+       DECLAR-OUTPUT SECTION.
+       USE AFTER ERROR PROCEDURE ON OUTPUT.
+       CONTINUE-OUTPUT.
+           CONTINUE.
+       DECLAR-IO SECTION.
+       USE AFTER ERROR PROCEDURE ON I-O.
+       CONTINUE-IO.
+           CONTINUE.
+       DECLAR-EXTEND SECTION.
+       USE AFTER ERROR PROCEDURE ON EXTEND.
+       CONTINUE-EXTEND.
+           CONTINUE.
+       END DECLARATIVES.
        
        PROGRAMA SECTION.
        INICIO.    
@@ -357,24 +413,25 @@
            perform IMPRIMO-ENCABEZADO.
            perform CICLO-CONSORCIO UNTIL FS-CONS1 = 10 AND 
                          FS-CONS2 = 10 AND FS-CONS3 = 10.
-           perform IMPRIMO-BAJAS-FIN.
+           perform IMPRIMIR-BAJAS-FIN.
            perform MOSTRAR-ESTADISTICAS.
            perform CERRAR-ARCHIVOS.
            STOP RUN.
 
        INICIALIZAR.
-           DISPLAY "INICIALIZAR INICIA".
+      *     DISPLAY "INICIALIZAR INICIA".
            MOVE 0 TO bajas.
            MOVE 1 TO cantHojas.
            MOVE 0 TO CONT-ANIO.
+           MOVE 0 TO CAN-EST.
            ACCEPT FECHA FROM DATE.
            MOVE FECHA-AA TO PE1-FECHA-AA.
            MOVE FECHA-MM TO PE1-FECHA-MM.
            MOVE FECHA-DD TO PE1-FECHA-DD.
-           DISPLAY "INICIALIZAR FIN".
+      *     DISPLAY "INICIALIZAR FIN".
       
        ABRIR-ARCHIVOS.
-           DISPLAY "ABRIR-ARCHIVOS INICIA".
+      *     DISPLAY "ABRIR-ARCHIVOS INICIA".
            OPEN INPUT CONS1.
            IF FS-CONS1 NOT = ZERO
               DISPLAY "Err abrir Consorcios1: " FS-CONS1
@@ -398,25 +455,34 @@
 
            OPEN OUTPUT MAESTRO.
            OPEN OUTPUT LISTADO.
-           DISPLAY "ABRIR-ARCHIVOS FIN".
+           OPEN OUTPUT ESTADIST.
+      *     DISPLAY "ABRIR-ARCHIVOS FIN".
 
        GEN-TABLA-ESTADOS.
            DISPLAY "GEN-TABLA-ESTADOS".
            PERFORM LEO-ESTADO.
            PERFORM CARGAR-ESTADO VARYING WS-L-CONT-EST
                    FROM 1 BY 1 
-                   UNTIL FS-EST = 10 OR WS-L-CONT-EST > 30.			
+                   UNTIL FS-EST = 10 OR WS-L-CONT-EST > 30.	
            PERFORM ORDENAR-TABLA-ESTADOS.	
 		
        CARGAR-ESTADO.
-           DISPLAY EST.
+      *     DISPLAY "1: " EST.
            MOVE EST TO TAB-ESTADOS-ELM (WS-L-CONT-EST).
+      *     DISPLAY "2: " TAB-ESTADOS-ELM (1).
            PERFORM LEO-ESTADO.
 			
        LEO-ESTADO.
            DISPLAY "LEO-ESTADO-INICIA".
-           READ ESTADOS.
-           DISPLAY "FS-EST = " FS-EST.
+           MOVE 'NO' TO EST-OK.
+           PERFORM UNTIL EST-OK = 'SI'
+             READ ESTADOS
+             IF EST-ESTADO <= 30 
+                MOVE 'SI' TO EST-OK
+             END-IF
+           END-PERFORM.
+           IF FS-EST = ZERO ADD 1 TO CAN-EST.
+      *     DISPLAY "FS-EST = " FS-EST.
            IF FS-EST NOT = ZERO AND 10
               DISPLAY "Error al leer Estados: " FS-EST
               STOP RUN.			
@@ -466,16 +532,17 @@
               STOP RUN.
 
        OBTENER-ESTADO.
-           DISPLAY "OBTENER ESTADO " CON-MENOR-ESTADO "--".
+      *     DISPLAY "OBTENER ESTADO " CON-MENOR-ESTADO "--".
            SET IND TO 1.
            SEARCH ALL TAB-ESTADOS-ELM
-                  AT END DISPLAY "Estado no encontrado"                 
+                  AT END MOVE "--ERROR--ENE--" 
+                                            TO WS-DESCRIP-ESTADO                 
                   WHEN TAB-ESTADOS-ESTADO(IND) = CON-MENOR-ESTADO
                        PERFORM OBTENER-INFO-ESTADO
            END-SEARCH.
 				
        OBTENER-INFO-ESTADO.
-           DISPLAY "OBTENER INFORMACION DEL ESTADO".
+      *     DISPLAY "OBTENER INFORMACION DEL ESTADO".
            MOVE TAB-ESTADOS-DESCRIP(IND) TO WS-DESCRIP-ESTADO.
 		
        IMPRIMO-ENCABEZADO.
@@ -493,7 +560,7 @@
            PERFORM IMPRIMIR-BAJA.
            ADD 1 TO bajas.
 
-       IMPRIMIR-BAJA-FIN.
+       IMPRIMIR-BAJAS-FIN.
            DISPLAY "IMPRIMIR-BAJA".
            MOVE bajas TO PB-FINAL-TOTAL.
            WRITE LINEA FROM PB-FINAL.
@@ -535,19 +602,61 @@
               PERFORM ALTA-MAESTRO.
            
        MOSTRAR-ESTADISTICAS.
-           DISPLAY "MOSTRAR-ESTADISTICAS".
-           DISPLAY EST-ENCABEZADO-1.
-           DISPLAY EST-ENCABEZADO-2.
-           DISPLAY EST-ENCABEZADO-3.
+      *     DISPLAY "MOSTRAR-ESTADISTICAS".
+      *     DISPLAY EST-ENCABEZADO-1.
+           WRITE LINEA-E FROM EST-ENCABEZADO-1.
+      *     DISPLAY EST-ENCABEZADO-2.
+           WRITE LINEA-E FROM EST-ENCABEZADO-2.
+      *     DISPLAY EST-ENCABEZADO-3.
+           WRITE LINEA-E FROM EST-ENCABEZADO-3.
+           PERFORM EST-ENCAB-T-ESTADOS.
+      *     DISPLAY EST-ENCABEZADO-L.
+           WRITE LINEA-E FROM EST-ENCABEZADO-L.
            MOVE 1 TO IND2.			
            PERFORM CICLO-ESTADISTICA-1 UNTIL IND2 > CONT-ANIO.
 				
-				
+       EST-ENCAB-T-ESTADOS.
+           IF CAN-EST >= 1 MOVE TAB-ESTADOS-ESTADO (1) TO E-01.
+           IF CAN-EST >= 2 MOVE TAB-ESTADOS-ESTADO (2) TO E-02.
+           IF CAN-EST >= 3 MOVE TAB-ESTADOS-ESTADO (3) TO E-03.
+           IF CAN-EST >= 4 MOVE TAB-ESTADOS-ESTADO (4) TO E-04.
+           IF CAN-EST >= 5 MOVE TAB-ESTADOS-ESTADO (5) TO E-05.
+           IF CAN-EST >= 6 MOVE TAB-ESTADOS-ESTADO (6) TO E-06.
+           IF CAN-EST >= 7 MOVE TAB-ESTADOS-ESTADO (7) TO E-07.
+           IF CAN-EST >= 8 MOVE TAB-ESTADOS-ESTADO (8) TO E-08.
+           IF CAN-EST >= 9 MOVE TAB-ESTADOS-ESTADO (9) TO E-09.
+           IF CAN-EST >= 10 MOVE TAB-ESTADOS-ESTADO (10) TO E-10.
+           IF CAN-EST >= 11 MOVE TAB-ESTADOS-ESTADO (11) TO E-11.
+           IF CAN-EST >= 12 MOVE TAB-ESTADOS-ESTADO (12) TO E-12.
+           IF CAN-EST >= 13 MOVE TAB-ESTADOS-ESTADO (13) TO E-13.
+           IF CAN-EST >= 14 MOVE TAB-ESTADOS-ESTADO (14) TO E-14.
+           IF CAN-EST >= 15 MOVE TAB-ESTADOS-ESTADO (15) TO E-15.
+           IF CAN-EST >= 16 MOVE TAB-ESTADOS-ESTADO (16) TO E-16.
+           IF CAN-EST >= 17 MOVE TAB-ESTADOS-ESTADO (17) TO E-17.
+           IF CAN-EST >= 18 MOVE TAB-ESTADOS-ESTADO (18) TO E-18.
+           IF CAN-EST >= 19 MOVE TAB-ESTADOS-ESTADO (19) TO E-19.
+           IF CAN-EST >= 20 MOVE TAB-ESTADOS-ESTADO (20) TO E-20.
+           IF CAN-EST >= 21 MOVE TAB-ESTADOS-ESTADO (21) TO E-21.
+           IF CAN-EST >= 22 MOVE TAB-ESTADOS-ESTADO (22) TO E-22.
+           IF CAN-EST >= 23 MOVE TAB-ESTADOS-ESTADO (23) TO E-23.
+           IF CAN-EST >= 24 MOVE TAB-ESTADOS-ESTADO (24) TO E-24.
+           IF CAN-EST >= 25 MOVE TAB-ESTADOS-ESTADO (25) TO E-25.
+           IF CAN-EST >= 26 MOVE TAB-ESTADOS-ESTADO (26) TO E-26.
+           IF CAN-EST >= 27 MOVE TAB-ESTADOS-ESTADO (27) TO E-27.
+           IF CAN-EST >= 28 MOVE TAB-ESTADOS-ESTADO (28) TO E-28.
+           IF CAN-EST >= 29 MOVE TAB-ESTADOS-ESTADO (29) TO E-29.
+           IF CAN-EST >= 30 MOVE TAB-ESTADOS-ESTADO (30) TO E-30.
+      *     DISPLAY EST-ENCABEZADO-4.
+           WRITE LINEA-E FROM EST-ENCABEZADO-4.
+			
        CICLO-ESTADISTICA-1.
            MOVE 1 TO L-CONT-EST.
-           MOVE T-EST-COL(IND2, L-CONT-EST) TO L-ANIO.
+      *     MOVE T-EST-COL(IND2, L-CONT-EST) TO L-ANIO.
+           MOVE T-EST-ANIO(IND2) TO L-ANIO.
+      *     DISPLAY "ANIO ES: " L-ANIO " IND2 vale: " IND2. 
            PERFORM ARMAR-LINEA-ESTADISTICA.
-           DISPLAY LINEA-ESTADISTICA.
+      *     DISPLAY LINEA-ESTADISTICA.
+           WRITE LINEA-E FROM LINEA-ESTADISTICA.
            ADD 1 TO IND2.
 			
        ARMAR-LINEA-ESTADISTICA.
@@ -621,9 +730,10 @@
            CLOSE ESTADOS.
            CLOSE MAESTRO.
            CLOSE LISTADO.
+           CLOSE ESTADIST.
 
        DET-MENOR.
-           DISPLAY "DET-MENOR".
+      *     DISPLAY "DET-MENOR".
       *     DISPLAY "REG-CONS1: " REG-CONS1.
            MOVE REG-CONS1 TO CON-MENOR.
       *     DISPLAY "CON-MENOR: " CON-MENOR.
@@ -635,10 +745,10 @@
       *        DISPLAY REG-CONS3
               MOVE REG-CONS3 TO CON-MENOR.
       *        DISPLAY "CON-MENOR: " CON-MENOR.
-           DISPLAY "El menor es " CON-MENOR.
+      *     DISPLAY "El menor es " CON-MENOR.
 
        POS-CUENTAS.
-           DISPLAY "POS-CUENTAS".
+      *     DISPLAY "POS-CUENTAS".
            PERFORM  LEO-CUENTAS.
 
        POS-CONSORN1.			
@@ -653,7 +763,7 @@
               ADD 1 TO cantRegmC.           
         
        POS-CONSORN2.
-           DISPLAY "Estoy en POS-CONSORN2".
+      *     DISPLAY "Estoy en POS-CONSORN2".
            MOVE REG-CONS2-FECHA-ALTA TO FEC-ESTADISTICA.
            MOVE REG-CONS2-ESTADO TO EST-ACTUAL.
            PERFORM GENERAR-ESTADISTICAS.
@@ -676,25 +786,22 @@
               ADD 1 TO cantRegmC.
 	
        ALTA-MAESTRO.
-           DISPLAY "ALTA MAESTRO".
+      *     DISPLAY "ALTA MAESTRO".
            MOVE CTA-NRO-CTA TO WS-NRO-CTA-AUX.
            IF CON-MENOR-CUIT-CONS NOT EQUAL TO CTA-CUIT-CONS
               MOVE 0 TO WS-NRO-CTA-AUX.
            ADD 1 TO cantConsorcios.
-           MOVE CON-MENOR-CUIT-CONS TO  MAE-CUIT-CONS.
-           MOVE CON-MENOR-FECHA-ALTA TO  MAE-FECHA-ALTA.
+           MOVE CON-MENOR-CUIT-CONS TO MAE-CUIT-CONS.
+           MOVE CON-MENOR-FECHA-ALTA TO MAE-FECHA-ALTA.
            MOVE WS-DESCRIP-ESTADO TO MAE-DESCRIP-ESTADO.
            MOVE CON-MENOR-NOMBRE-CONSORCIO TO MAE-NOMBRE-CONSORCIO.
            MOVE CON-MENOR-TEL TO MAE-TEL.
            MOVE CON-MENOR-DIR TO MAE-DIR.
-           MOVE WS-NRO-CTA-AUX TO  MAE-NRO-CTA.
+           MOVE WS-NRO-CTA-AUX TO MAE-NRO-CTA.
            WRITE MAE.
 
-       IMPRIMO-BAJAS-FIN.
-           DISPLAY "IMPRIMO-BAJAS-FIN".
-
        GENERAR-ESTADISTICAS.
-           DISPLAY "GENERAR-ESTADISTICAS".
+      *     DISPLAY "GENERAR-ESTADISTICAS".
            MOVE F-EST-ANIO TO ANIO-ESTADISTICA.			
            PERFORM BUSCAR-ANIO.
            IF EXISTE-ESTADISTICA = 'SI'
@@ -702,7 +809,6 @@
            ELSE
               PERFORM AGREGAR-Y-ACTUALIZAR.
 				
-		
        BUSCAR-ANIO.
            MOVE 1 TO I.
            MOVE 'NO' TO ENCONTRADO.
@@ -728,10 +834,12 @@
            MOVE 'SI' TO EXISTE-ESTADISTICA.
 
        ACTUALIZAR-ESTADISTICA.
+           DISPLAY "ACTUALIZAR-EST".
            ADD 1 TO EST-ACTUAL.
            ADD 1 TO T-EST-COL(IND2, EST-ACTUAL).			
 		
        AGREGAR-Y-ACTUALIZAR.
+           DISPLAY "AGREGAR-Y-ACTUALIZAR-EST".
            MOVE ANIO-ESTADISTICA TO T-EST-ANIO(CONT-ANIO).
            ADD 1 TO EST-ACTUAL.
            ADD 1 TO T-EST-COL(CONT-ANIO, EST-ACTUAL).
