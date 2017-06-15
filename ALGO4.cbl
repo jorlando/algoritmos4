@@ -458,8 +458,17 @@
               STOP RUN.
 
            OPEN OUTPUT MAESTRO.
+           IF FS-MAE NOT = ZERO
+              DISPLAY "Err abrir Maestro: " FS-MAE
+              STOP RUN.
            OPEN OUTPUT LISTADO.
+           IF FS-LIST NOT = ZERO
+              DISPLAY "Err abrir listado: " FS-LIST
+              STOP RUN.
            OPEN OUTPUT ESTADIST.
+           IF FS-ESTAD NOT = ZERO
+              DISPLAY "Err abrir Estadisticas: " FS-ESTAD
+              STOP RUN.
       *     DISPLAY "ABRIR-ARCHIVOS FIN".
 
        GEN-TABLA-ESTADOS.
@@ -594,9 +603,13 @@
        IMPRIMO-ENCABEZADO.
            MOVE cantHojas TO PE1-HOJA.
            WRITE LINEA FROM PE1-ENCABE.
+           PERFORM CHECK-WRITE-LISBAJAS.
            WRITE LINEA FROM PE2-ENCABE.
+           PERFORM CHECK-WRITE-LISBAJAS.
            WRITE LINEA FROM PE3-ENCABE.
+           PERFORM CHECK-WRITE-LISBAJAS.
            WRITE LINEA FROM PE2-ENCABE.
+           PERFORM CHECK-WRITE-LISBAJAS.
            ADD 1 TO cantHojas.
            MOVE 4 TO cantLineas.
        
@@ -610,6 +623,7 @@
       *     DISPLAY "IMPRIMIR-BAJA".
            MOVE bajas TO PB-FINAL-TOTAL.
            WRITE LINEA FROM PB-FINAL.
+           PERFORM CHECK-WRITE-LISBAJAS.
            
        IMPRIMIR-BAJA.
       *     DISPLAY "IMPRIMO-BAJAS".
@@ -621,9 +635,12 @@
            MOVE CON-MENOR-TEL TO PB2-BAJA-TELEFONO.
            MOVE CON-MENOR-DIR TO PB2-BAJA-DIRECCION.
            WRITE LINEA FROM PB2-BAJA.
+           PERFORM CHECK-WRITE-LISBAJAS.
            MOVE cantRegmC TO PB3-TOTAL-NOV.
            WRITE LINEA FROM PB3-BAJA.
+           PERFORM CHECK-WRITE-LISBAJAS.
            WRITE LINEA FROM PE2-ENCABE.
+           PERFORM CHECK-WRITE-LISBAJAS.
            ADD 4 TO cantLineas.
            
        CICLO-CONSORCIO.
@@ -651,13 +668,17 @@
       *     DISPLAY "MOSTRAR-ESTADISTICAS".
       *     DISPLAY EST-ENCABEZADO-1.
            WRITE LINEA-E FROM EST-ENCABEZADO-1.
+           PERFORM CHECK-WRITE-ESTADIST.
       *     DISPLAY EST-ENCABEZADO-2.
            WRITE LINEA-E FROM EST-ENCABEZADO-2.
+           PERFORM CHECK-WRITE-ESTADIST.
       *     DISPLAY EST-ENCABEZADO-3.
            WRITE LINEA-E FROM EST-ENCABEZADO-3.
+           PERFORM CHECK-WRITE-ESTADIST.
            PERFORM EST-ENCAB-T-ESTADOS.
       *     DISPLAY EST-ENCABEZADO-L.
            WRITE LINEA-E FROM EST-ENCABEZADO-L.
+           PERFORM CHECK-WRITE-ESTADIST.
            MOVE 1 TO IND2.			
            PERFORM CICLO-ESTADISTICA-1 UNTIL IND2 > CONT-ANIO.
 				
@@ -694,6 +715,7 @@
            IF CAN-EST >= 30 MOVE TAB-ESTADOS-ESTADO (30) TO E-30.
       *     DISPLAY EST-ENCABEZADO-4.
            WRITE LINEA-E FROM EST-ENCABEZADO-4.
+           PERFORM CHECK-WRITE-ESTADIST.
 			
        CICLO-ESTADISTICA-1.
            MOVE 1 TO L-CONT-EST.
@@ -701,8 +723,10 @@
            MOVE T-EST-ANIO(IND2) TO L-ANIO.
       *     DISPLAY "ANIO ES: " L-ANIO " IND2 vale: " IND2. 
            PERFORM ARMAR-LINEA-ESTADISTICA.
+           PERFORM CHECK-WRITE-ESTADIST.
       *     DISPLAY LINEA-ESTADISTICA.
            WRITE LINEA-E FROM LINEA-ESTADISTICA.
+           PERFORM CHECK-WRITE-ESTADIST.
            ADD 1 TO IND2.
 			
        ARMAR-LINEA-ESTADISTICA.
@@ -891,6 +915,16 @@
            MOVE ANIO-ESTADISTICA TO T-EST-ANIO(CONT-ANIO).
            ADD 1 TO EST-ACTUAL.
            ADD 1 TO T-EST-COL(CONT-ANIO, EST-ACTUAL).
+
+       CHECK-WRITE-LISBAJAS.
+          IF FS-LIST NOT = ZERO AND 10
+              DISPLAY "Error al escribir lisBAJAS: " FS-LIST
+              STOP RUN.
+
+       CHECK-WRITE-ESTADIST.
+          IF FS-ESTAD NOT = ZERO AND 10
+              DISPLAY "Error al escribir ESTADIST: " FS-ESTAD
+              STOP RUN. 
 			
 			
 				
