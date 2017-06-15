@@ -33,7 +33,7 @@
        FILE SECTION.
        FD CONS1 	LABEL RECORD IS STANDARD
                         VALUE OF FILE-ID IS 
-                        'cons1.dat'.
+                        'C:\consor\cons1.dat'.
 
        01 REG-CONS1.	
            03 REG-CONS1-CUIT-CONS          PIC 9(15).
@@ -46,7 +46,7 @@
 
        FD CONS2 	LABEL RECORD IS STANDARD
 			VALUE OF FILE-ID IS 
-                        'cons2.dat'.
+                        'C:\consor\cons2.dat'.
        01 REG-CONS2.	
 	   03 REG-CONS2-CUIT-CONS          PIC 9(15).
 	   03 REG-CONS2-FECHA-ALTA         PIC X(10).
@@ -58,7 +58,7 @@
 
        FD CONS3 	LABEL RECORD IS STANDARD
 			VALUE OF FILE-ID IS 
-                        'cons3.dat'.
+                        'C:\consor\cons3.dat'.
        01 REG-CONS3.	
 	   03 REG-CONS3-CUIT-CONS          PIC 9(15).
 	   03 REG-CONS3-FECHA-ALTA         PIC X(10).
@@ -70,7 +70,7 @@
 
        FD CUENTAS LABEL RECORD IS STANDARD
 	           VALUE OF FILE-ID IS 
-                   "cuentas.dat".
+                   "C:\consor\cuentas.dat".
        01 CTA. 
 	   03 CTA-CUIT-CONS                PIC 9(15).
 	   03 CTA-NRO-CTA                  PIC 9(08).
@@ -80,7 +80,7 @@
 
        FD ESTADOS LABEL RECORD IS STANDARD
 	          VALUE OF FILE-ID IS 
-                  "estados.dat".   
+                  "C:\consor\estados.dat".   
 
        01 EST.
 	   03 EST-ESTADO                  PIC 9(02).
@@ -88,7 +88,7 @@
 
        FD MAESTRO LABEL RECORD IS STANDARD
                   VALUE OF FILE-ID IS 
-                  "maestro.dat".
+                  "C:\consor\maestro.dat".
 
        01 MAE.
 	   03 MAE-CUIT-CONS               PIC 9(15).
@@ -101,12 +101,12 @@
 	
        FD LISTADO LABEL RECORD IS STANDARD
                   VALUE OF FILE-ID IS 
-                  "lisBajas".
+                  "C:\consor\lisBajas".
        01 LINEA                           PIC X(80).
 
        FD ESTADIST LABEL RECORD IS STANDARD
                   VALUE OF FILE-ID IS 
-                  "Estadist".
+                  "C:\consor\Estadist".
        01 LINEA-E                         PIC X(125).
 
        WORKING-STORAGE SECTION.
@@ -136,8 +136,8 @@
        77 FS-ESTAD              PIC XX.
        77 CUIT-N1               PIC 9(15).
        77 CUIT-N2               PIC 9(15).
-       77 CUIT-N3               PIC 9(15).
-		
+       77 CUIT-N3               PIC 9(15). 
+       77 ESTADO-E              PIC 99.		
        77 cantConsorcios 		PIC 99 VALUE 0.
        77 bajas 			PIC 99 VALUE 0.
        77 cantLineas 			PIC 99 VALUE 0.
@@ -148,6 +148,7 @@
        77 I                    PIC 99.
        77 J                    PIC 99.
        77 IND2                 PIC 99.
+       77 POSICION             PIC 99.       
        77 MAX-EST			PIC 99 VALUE 30.
        77 CAN-EST                       PIC 99 VALUE 0.
        77 EST-OK               PIC XX.
@@ -184,10 +185,12 @@
                          OCCURS 30 TIMES
                          ascending key TAB-ESTADOS-ESTADO
                          INDEXED BY IND.
+                           04 TAB-ESTADOS-DATO.     
                                 05 TAB-ESTADOS-ESTADO PIC 9(02) 
                                                       VALUE 99.
                                 05 TAB-ESTADOS-DESCRIP PIC X(15)
                                        VALUE 'ZZZZZZZZZZZZZZZ'.
+                           04 TAB-ESTADOS-POS   PIC 99.
        01 MIERDA         PIC 9(02).
        01 FECHA.
           03 FECHA-AA    PIC 9(02).
@@ -452,45 +455,41 @@
            IF FS-EST NOT = ZERO
               DISPLAY "Error al abrir Estados: " FS-EST
               STOP RUN.
-           OPEN OUTPUT MAESTRO.
-           IF FS-MAE NOT = ZERO
-              DISPLAY "Err abrir Maestro: " FS-MAE
-              STOP RUN.
-           OPEN OUTPUT LISTADO.
-           IF FS-LIST NOT = ZERO
-              DISPLAY "Err abrir listado: " FS-LIST
-              STOP RUN.
 
+           OPEN OUTPUT MAESTRO.
+           OPEN OUTPUT LISTADO.
            OPEN OUTPUT ESTADIST.
-           IF FS-ESTAD NOT = ZERO
-              DISPLAY "Err abrir Estadisticas: " FS-ESTAD
-              STOP RUN.
       *     DISPLAY "ABRIR-ARCHIVOS FIN".
 
        GEN-TABLA-ESTADOS.
            DISPLAY "GEN-TABLA-ESTADOS".
            PERFORM LEO-ESTADO.
+      *     MOVE CAN-EST TO TAB-ESTADOS-POS(IND)
            PERFORM CARGAR-ESTADO VARYING WS-L-CONT-EST
                    FROM 1 BY 1 
                    UNTIL FS-EST = 10 OR WS-L-CONT-EST > 30.	
-           PERFORM ORDENAR-TABLA-ESTADOS.	
+           MOVE WS-L-CONT-EST TO CAN-EST.
+           SUBTRACT 1 FROM CAN-EST GIVING CAN-EST.
+           PERFORM ORDENAR-TABLA-ESTADOS.
+           DISPLAY "CAN - EST = " CAN-EST.	
 		
        CARGAR-ESTADO.
       *     DISPLAY "1: " EST.
-           MOVE EST TO TAB-ESTADOS-ELM (WS-L-CONT-EST).
-      *     DISPLAY "2: " TAB-ESTADOS-ELM (1).
+           MOVE WS-L-CONT-EST TO TAB-ESTADOS-POS (WS-L-CONT-EST).
+           MOVE EST TO TAB-ESTADOS-DATO (WS-L-CONT-EST).
+           DISPLAY "2: " TAB-ESTADOS-ELM (WS-L-CONT-EST).
            PERFORM LEO-ESTADO.
 			
        LEO-ESTADO.
-           DISPLAY "LEO-ESTADO-INICIA".
-           MOVE 'NO' TO EST-OK.
-           PERFORM UNTIL EST-OK = 'SI'
+      *     DISPLAY "LEO-ESTADO-INICIA".
+      *     MOVE 'NO' TO EST-OK.
+      *     PERFORM UNTIL EST-OK = 'SI'
              READ ESTADOS
-             IF EST-ESTADO <= 30 
-                MOVE 'SI' TO EST-OK
-             END-IF
-           END-PERFORM.
-           IF FS-EST = ZERO ADD 1 TO CAN-EST.
+      *       IF EST-ESTADO <= 30 
+      *          MOVE 'SI' TO EST-OK
+      *       END-IF
+      *     END-PERFORM.
+      *     IF FS-EST = ZERO ADD 1 TO CAN-EST.
       *     DISPLAY "FS-EST = " FS-EST.
            IF FS-EST NOT = ZERO AND 10
               DISPLAY "Error al leer Estados: " FS-EST
@@ -502,10 +501,10 @@
            PERFORM UNTIL I > MAX-EST
             MOVE I TO J
             PERFORM UNTIL J > MAX-EST
-             IF (TAB-ESTADOS-ELM (I) > TAB-ESTADOS-ELM (J))
-                MOVE TAB-ESTADOS-ELM (I) TO AUX
-                MOVE TAB-ESTADOS-ELM (J) TO TAB-ESTADOS-ELM (I)
-                MOVE AUX TO TAB-ESTADOS-ELM (J)
+             IF (TAB-ESTADOS-DATO (I) > TAB-ESTADOS-DATO (J))
+                MOVE TAB-ESTADOS-DATO (I) TO AUX
+                MOVE TAB-ESTADOS-DATO (J) TO TAB-ESTADOS-DATO (I)
+                MOVE AUX TO TAB-ESTADOS-DATO (J)
              END-IF
              ADD 1 TO J GIVING J
             END-PERFORM
@@ -547,23 +546,35 @@
                   AT END MOVE "--ERROR--ENE--" 
                                             TO WS-DESCRIP-ESTADO                 
                   WHEN TAB-ESTADOS-ESTADO(IND) = CON-MENOR-ESTADO
-                       PERFORM OBTENER-INFO-ESTADO
+                        PERFORM OBTENER-INFO-ESTADO
+           END-SEARCH.
+
+       OBTENER-ESTADO-EST.
+      *     DISPLAY "OBTENER ESTADO " CON-MENOR-ESTADO "--".
+           SET IND TO 1.
+           SEARCH ALL TAB-ESTADOS-ELM
+                  AT END DISPLAY "Error OBTENER-ESTADO-EST"                 
+                  WHEN TAB-ESTADOS-ESTADO(IND) = ESTADO-E
+                        PERFORM OBTENER-POS-ESTADO
            END-SEARCH.
 				
        OBTENER-INFO-ESTADO.
-      *     DISPLAY "OBTENER INFORMACION DEL ESTADO".
            MOVE TAB-ESTADOS-DESCRIP(IND) TO WS-DESCRIP-ESTADO.
+      *     MOVE TAB-ESTADOS-POS(IND) TO POSICION.
+      *     SUBTRACT 1 FROM POSICION GIVING POSICION.
+      *     DISPLAY "SERA????: " TAB-ESTADOS-ELM(IND).
+
+       OBTENER-POS-ESTADO.
+           MOVE TAB-ESTADOS-POS(IND) TO POSICION.
+           SUBTRACT 1 FROM POSICION GIVING POSICION.
+           DISPLAY "SERA????: " TAB-ESTADOS-ELM(IND).
 		
        IMPRIMO-ENCABEZADO.
            MOVE cantHojas TO PE1-HOJA.
            WRITE LINEA FROM PE1-ENCABE.
-           PERFORM CHECK-WRITE-LISBAJAS.
            WRITE LINEA FROM PE2-ENCABE.
-           PERFORM CHECK-WRITE-LISBAJAS.
            WRITE LINEA FROM PE3-ENCABE.
-           PERFORM CHECK-WRITE-LISBAJAS.
            WRITE LINEA FROM PE2-ENCABE.
-           PERFORM CHECK-WRITE-LISBAJAS.
            ADD 1 TO cantHojas.
            MOVE 4 TO cantLineas.
        
@@ -577,12 +588,10 @@
            DISPLAY "IMPRIMIR-BAJA".
            MOVE bajas TO PB-FINAL-TOTAL.
            WRITE LINEA FROM PB-FINAL.
-           PERFORM CHECK-WRITE-LISBAJAS.
            
        IMPRIMIR-BAJA.
            DISPLAY "IMPRIMO-BAJAS".
            WRITE LINEA FROM PB1-BAJA.
-           PERFORM CHECK-WRITE-LISBAJAS.
            MOVE CON-MENOR-CUIT-CONS TO PB2-BAJA-CUIT-CONS.
            MOVE CON-MENOR-FECHA-ALTA TO PB2-BAJA-FEC-ALTA.
            MOVE CON-MENOR-FECHA-BAJA TO PB2-BAJAR-FEC-BAJA.
@@ -590,12 +599,9 @@
            MOVE CON-MENOR-TEL TO PB2-BAJA-TELEFONO.
            MOVE CON-MENOR-DIR TO PB2-BAJA-DIRECCION.
            WRITE LINEA FROM PB2-BAJA.
-           PERFORM CHECK-WRITE-LISBAJAS.
            MOVE cantRegmC TO PB3-TOTAL-NOV.
            WRITE LINEA FROM PB3-BAJA.
-           PERFORM CHECK-WRITE-LISBAJAS.
            WRITE LINEA FROM PE2-ENCABE.
-           PERFORM CHECK-WRITE-LISBAJAS.
            ADD 4 TO cantLineas.
            
        CICLO-CONSORCIO.
@@ -623,17 +629,13 @@
       *     DISPLAY "MOSTRAR-ESTADISTICAS".
       *     DISPLAY EST-ENCABEZADO-1.
            WRITE LINEA-E FROM EST-ENCABEZADO-1.
-           PERFORM CHECK-WRITE-ESTADIST.
       *     DISPLAY EST-ENCABEZADO-2.
            WRITE LINEA-E FROM EST-ENCABEZADO-2.
-           PERFORM CHECK-WRITE-ESTADIST.
       *     DISPLAY EST-ENCABEZADO-3.
            WRITE LINEA-E FROM EST-ENCABEZADO-3.
-           PERFORM CHECK-WRITE-ESTADIST.
            PERFORM EST-ENCAB-T-ESTADOS.
       *     DISPLAY EST-ENCABEZADO-L.
            WRITE LINEA-E FROM EST-ENCABEZADO-L.
-           PERFORM CHECK-WRITE-ESTADIST.
            MOVE 1 TO IND2.			
            PERFORM CICLO-ESTADISTICA-1 UNTIL IND2 > CONT-ANIO.
 				
@@ -670,7 +672,6 @@
            IF CAN-EST >= 30 MOVE TAB-ESTADOS-ESTADO (30) TO E-30.
       *     DISPLAY EST-ENCABEZADO-4.
            WRITE LINEA-E FROM EST-ENCABEZADO-4.
-           PERFORM CHECK-WRITE-ESTADIST.
 			
        CICLO-ESTADISTICA-1.
            MOVE 1 TO L-CONT-EST.
@@ -680,7 +681,6 @@
            PERFORM ARMAR-LINEA-ESTADISTICA.
       *     DISPLAY LINEA-ESTADISTICA.
            WRITE LINEA-E FROM LINEA-ESTADISTICA.
-           PERFORM CHECK-WRITE-ESTADIST.
            ADD 1 TO IND2.
 			
        ARMAR-LINEA-ESTADISTICA.
@@ -777,7 +777,7 @@
 
        POS-CONSORN1.			
            MOVE REG-CONS1-FECHA-ALTA TO FEC-ESTADISTICA.
-           MOVE REG-CONS1-ESTADO TO EST-ACTUAL.
+           MOVE REG-CONS1-ESTADO TO ESTADO-E.
            PERFORM GENERAR-ESTADISTICAS.
       *     MOVE REG-CONS1 TO CON-MENOR.
            PERFORM LEO-CONSORCIO-1.
@@ -789,7 +789,7 @@
        POS-CONSORN2.
       *     DISPLAY "Estoy en POS-CONSORN2".
            MOVE REG-CONS2-FECHA-ALTA TO FEC-ESTADISTICA.
-           MOVE REG-CONS2-ESTADO TO EST-ACTUAL.
+           MOVE REG-CONS2-ESTADO TO ESTADO-E.
            PERFORM GENERAR-ESTADISTICAS.
       *     MOVE REG-CONS2 TO CON-MENOR.
            PERFORM LEO-CONSORCIO-2.
@@ -800,7 +800,7 @@
         
        POS-CONSORN3.
            MOVE REG-CONS3-FECHA-ALTA TO FEC-ESTADISTICA.
-           MOVE REG-CONS3-ESTADO TO EST-ACTUAL.
+           MOVE REG-CONS3-ESTADO TO ESTADO-E.
            PERFORM GENERAR-ESTADISTICAS.
       *     MOVE REG-CONS3 TO CON-MENOR.
            PERFORM LEO-CONSORCIO-3.
@@ -825,7 +825,9 @@
            WRITE MAE.
 
        GENERAR-ESTADISTICAS.
-      *     DISPLAY "GENERAR-ESTADISTICAS".
+      *     DISPLAY "GENERAR-ESTADISTICAS" .
+           PERFORM OBTENER-ESTADO-EST.
+           MOVE POSICION TO EST-ACTUAL.
            MOVE F-EST-ANIO TO ANIO-ESTADISTICA.			
            PERFORM BUSCAR-ANIO.
            IF EXISTE-ESTADISTICA = 'SI'
@@ -867,18 +869,6 @@
            MOVE ANIO-ESTADISTICA TO T-EST-ANIO(CONT-ANIO).
            ADD 1 TO EST-ACTUAL.
            ADD 1 TO T-EST-COL(CONT-ANIO, EST-ACTUAL).
-
-       CHECK-WRITE-LISBAJAS.
-          IF FS-LIST NOT = ZERO AND 10
-              DISPLAY "Error al escribir lisBAJAS: " FS-LIST
-              STOP RUN.
-
-       CHECK-WRITE-ESTADIST.
-          IF FS-ESTAD NOT = ZERO AND 10
-              DISPLAY "Error al escribir ESTADIST: " FS-ESTAD
-              STOP RUN.        
-
-
 			
 			
 				
