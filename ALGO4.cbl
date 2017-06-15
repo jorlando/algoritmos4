@@ -149,6 +149,7 @@
        77 J                    PIC 99.
        77 IND2                 PIC 99.
        77 POSICION             PIC 99.       
+       77 EX-EST               PIC XX.
        77 MAX-EST			PIC 99 VALUE 30.
        77 CAN-EST                       PIC 99 VALUE 0.
        77 EST-OK               PIC XX.
@@ -462,24 +463,17 @@
       *     DISPLAY "ABRIR-ARCHIVOS FIN".
 
        GEN-TABLA-ESTADOS.
-           DISPLAY "GEN-TABLA-ESTADOS".
+      *     DISPLAY "GEN-TABLA-ESTADOS".
            PERFORM LEO-ESTADO.
       *     MOVE CAN-EST TO TAB-ESTADOS-POS(IND)
            PERFORM CARGAR-ESTADO VARYING WS-L-CONT-EST
                    FROM 1 BY 1 
-                   UNTIL FS-EST = 10 OR WS-L-CONT-EST > 30.	
+                   UNTIL FS-EST = 10 OR WS-L-CONT-EST > 30.
            MOVE WS-L-CONT-EST TO CAN-EST.
            SUBTRACT 1 FROM CAN-EST GIVING CAN-EST.
            PERFORM ORDENAR-TABLA-ESTADOS.
-           DISPLAY "CAN - EST = " CAN-EST.	
-		
-       CARGAR-ESTADO.
-      *     DISPLAY "1: " EST.
-           MOVE WS-L-CONT-EST TO TAB-ESTADOS-POS (WS-L-CONT-EST).
-           MOVE EST TO TAB-ESTADOS-DATO (WS-L-CONT-EST).
-           DISPLAY "2: " TAB-ESTADOS-ELM (WS-L-CONT-EST).
-           PERFORM LEO-ESTADO.
-			
+      *     DISPLAY "CAN - EST = " CAN-EST.	
+
        LEO-ESTADO.
       *     DISPLAY "LEO-ESTADO-INICIA".
       *     MOVE 'NO' TO EST-OK.
@@ -494,9 +488,37 @@
            IF FS-EST NOT = ZERO AND 10
               DISPLAY "Error al leer Estados: " FS-EST
               STOP RUN.			
+
+       CARGAR-ESTADO.
+      *     DISPLAY "1: " EST.
+           PERFORM EXISTE-ESTADO.
+           IF EX-EST = 'NO'
+              MOVE WS-L-CONT-EST TO 
+                           TAB-ESTADOS-POS (WS-L-CONT-EST)
+              MOVE EST TO TAB-ESTADOS-DATO (WS-L-CONT-EST)
+           ELSE
+              DISPLAY "Rep se excluye 2da aparicion: " EST
+           END-IF.
+           PERFORM LEO-ESTADO.
 			
+       EXISTE-ESTADO.
+      *     DISPLAY "viene: " EST-ESTADO.
+           PERFORM ORDENAR-TABLA-ESTADOS.
+           SET IND TO 1.
+      *     move 1 to I
+      *     perform until I > 30
+      *       display TAB-ESTADOS-ESTADO(I)
+      *       add 1 to I
+      *     end-perform.
+           SEARCH ALL TAB-ESTADOS-ELM
+                  AT END MOVE 'NO' TO EX-EST                 
+                  WHEN TAB-ESTADOS-ESTADO(IND) = EST-ESTADO
+                         MOVE 'SI' TO EX-EST
+           END-SEARCH.
+ 
+
        ORDENAR-TABLA-ESTADOS.
-           DISPLAY "ORDENAR TABLA ESTADOS".
+      *     DISPLAY "ORDENAR TABLA ESTADOS".
            MOVE 1 TO I.
            PERFORM UNTIL I > MAX-EST
             MOVE I TO J
@@ -513,27 +535,27 @@
        
        LEO-CONSORCIO-1.
            READ CONS1.
-           DISPLAY "LEO-CONSOR1 " FS-CONS1.
+      *     DISPLAY "LEO-CONSOR1 " FS-CONS1.
            IF FS-CONS1 NOT = ZERO AND 10
               DISPLAY "Err leer consorcios1 " FS-CONS1
               STOP RUN.
  
        LEO-CONSORCIO-2.
            READ CONS2.
-           DISPLAY "LEO-CONSOR2 " FS-CONS2.
+      *     DISPLAY "LEO-CONSOR2 " FS-CONS2.
            IF FS-CONS2 NOT = ZERO AND 10
               DISPLAY "Err: leer consorcios2:" FS-CONS2
               STOP RUN.
             
        LEO-CONSORCIO-3.
            READ CONS3.
-           DISPLAY "LEO-CONSORC3 " FS-CONS3.
+      *     DISPLAY "LEO-CONSORC3 " FS-CONS3.
            IF FS-CONS3 NOT = ZERO AND 10
               DISPLAY "Err: leer consorcios3:" FS-CONS3
               STOP RUN.    
   
        LEO-CUENTAS.
-           DISPLAY "LEO-CUENTAS".
+      *     DISPLAY "LEO-CUENTAS".
            READ CUENTAS.
            IF FS-CTAS NOT = ZERO AND 10
               DISPLAY "Error al leer cUENTas: " FS-CTAS
@@ -567,7 +589,7 @@
        OBTENER-POS-ESTADO.
            MOVE TAB-ESTADOS-POS(IND) TO POSICION.
            SUBTRACT 1 FROM POSICION GIVING POSICION.
-           DISPLAY "SERA????: " TAB-ESTADOS-ELM(IND).
+      *     DISPLAY "SERA????: " TAB-ESTADOS-ELM(IND).
 		
        IMPRIMO-ENCABEZADO.
            MOVE cantHojas TO PE1-HOJA.
@@ -585,12 +607,12 @@
            ADD 1 TO bajas.
 
        IMPRIMIR-BAJAS-FIN.
-           DISPLAY "IMPRIMIR-BAJA".
+      *     DISPLAY "IMPRIMIR-BAJA".
            MOVE bajas TO PB-FINAL-TOTAL.
            WRITE LINEA FROM PB-FINAL.
            
        IMPRIMIR-BAJA.
-           DISPLAY "IMPRIMO-BAJAS".
+      *     DISPLAY "IMPRIMO-BAJAS".
            WRITE LINEA FROM PB1-BAJA.
            MOVE CON-MENOR-CUIT-CONS TO PB2-BAJA-CUIT-CONS.
            MOVE CON-MENOR-FECHA-ALTA TO PB2-BAJA-FEC-ALTA.
@@ -605,7 +627,7 @@
            ADD 4 TO cantLineas.
            
        CICLO-CONSORCIO.
-           DISPLAY "CICLO-CONSORCIO".
+      *     DISPLAY "CICLO-CONSORCIO".
            PERFORM DET-MENOR.
            MOVE 1 TO cantRegmC.
            PERFORM POS-CUENTAS UNTIL FS-CTAS = 10 
@@ -746,7 +768,7 @@
            ADD 1 TO L-CONT-EST.			
 
        CERRAR-ARCHIVOS.
-           DISPLAY "CERRAR-ARCHIVOS".
+      *     DISPLAY "CERRAR-ARCHIVOS".
            CLOSE CONS1.
            CLOSE CONS2.
            CLOSE CONS3.
@@ -860,12 +882,12 @@
            MOVE 'SI' TO EXISTE-ESTADISTICA.
 
        ACTUALIZAR-ESTADISTICA.
-           DISPLAY "ACTUALIZAR-EST".
+      *     DISPLAY "ACTUALIZAR-EST".
            ADD 1 TO EST-ACTUAL.
            ADD 1 TO T-EST-COL(IND2, EST-ACTUAL).			
 		
        AGREGAR-Y-ACTUALIZAR.
-           DISPLAY "AGREGAR-Y-ACTUALIZAR-EST".
+      *     DISPLAY "AGREGAR-Y-ACTUALIZAR-EST".
            MOVE ANIO-ESTADISTICA TO T-EST-ANIO(CONT-ANIO).
            ADD 1 TO EST-ACTUAL.
            ADD 1 TO T-EST-COL(CONT-ANIO, EST-ACTUAL).
