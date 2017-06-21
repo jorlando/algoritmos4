@@ -1,0 +1,108 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CREARCUITPROV.
+
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+
+           SELECT PROV-SEQ ASSIGN TO DISK
+                                ORGANIZATION IS LINE SEQUENTIAL
+                                FILE STATUS IS FS-PSEQ.
+           SELECT PROV ASSIGN TO DISK
+                                ORGANIZATION IS INDEXED
+                                ACCESS MODE IS DYNAMIC
+                                RECORD KEY IS PRO-CLAVE
+                                FILE STATUS IS FS-PROV.
+								
+       DATA DIVISION.
+       FILE SECTION.
+
+       FD PROV-SEQ LABEL RECORD IS STANDARD
+                  VALUE OF FILE-ID IS 
+                  "C:\PROVS\provseq.dat".
+
+       01 PROSEQ.	   
+	   03 PROSEQ-COD-PROV              PIC 9(08).
+	   03 PROSEQ-DIRECCION             PIC X(30).
+	   03 PROSEQ-TELEFONO              PIC X(15).
+	   03 PROSEQ-RUBRO                 PIC 9(04).
+	   03 PROSEQ-DESCRIP-RUBRO         PIC X(15).	   
+	   03 PROSEQ-FECHA-ALTA            PIC 9(08).
+	   03 PROSEQ-CANT-CONS-ASIG        PIC 9(03).
+
+       FD PROV LABEL RECORD IS STANDARD
+                   VALUE OF FILE-ID IS 
+                   "C:\PROVS\prov.dat".
+       
+       01 PRO.
+           03 PRO-CLAVE.              
+              05 CPR-COD-PROV          PIC 9(08).
+	   03 PRO-DIRECCION                PIC X(30).
+	   03 PRO-TELEFONO                 PIC X(15).
+	   03 PRO-RUBRO                    PIC 9(04).
+	   03 PRO-DESCRIP-RUBRO            PIC X(15).	   
+	   03 PRO-FECHA-ALTA               PIC 9(08).
+	   03 PRO-CANT-CONS-ASIG           PIC 9(03).
+           
+
+       WORKING-STORAGE SECTION.
+       77 FS-PSEQ		        PIC XX.       
+       77 FS-PROV               PIC XX.       
+                
+       PROCEDURE DIVISION.
+       DECLARATIVES.
+       DECLAR-INPUT SECTION.
+       USE AFTER ERROR PROCEDURE ON INPUT.
+       CONTINUE-INPUT.
+           CONTINUE.
+       DECLAR-OUTPUT SECTION.
+       USE AFTER ERROR PROCEDURE ON OUTPUT.
+       CONTINUE-OUTPUT.
+           CONTINUE.
+       DECLAR-IO SECTION.
+       USE AFTER ERROR PROCEDURE ON I-O.
+       CONTINUE-IO.
+           CONTINUE.
+       DECLAR-EXTEND SECTION.
+       USE AFTER ERROR PROCEDURE ON EXTEND.
+       CONTINUE-EXTEND.
+           CONTINUE.
+       END DECLARATIVES.
+	   
+	   PROGRAMA SECTION.
+	   INICIO.    
+		   PERFORM ABRIR-ARCHIVOS.
+           PERFORM LEER-PROV.
+		   PERFORM CICLO-IND UNTIL FS-PSEQ = 10 OR FS-PROV = 10.
+		   PERFORM CERRAR-ARCHIVOS.
+		   STOP RUN.
+
+	   ABRIR-ARCHIVOS.
+	   DISPLAY "ABRIENDO ARCHIVOS".
+	   OPEN INPUT PROV-SEQ.
+	   IF FS-PSEQ NOT = ZERO 
+		  DISPLAY "ERROR AL ABRIR PROVEEDORES: " FS-PSEQ
+		  STOP RUN.
+	   OPEN OUTPUT PROV.
+	   IF FS-PROV NOT = ZERO	
+		  DISPLAY "ERROR AL ABRIR PROV INDEXADO: " FS-PROV
+		  STOP RUN.
+		  
+	   LEER-PROV.
+	   DISPLAY "LEO PROV-SEQ".
+	   READ PROV-SEQ.
+	   IF FS-PSEQ NOT = ZERO AND 10
+		  DISPLAY "ERROR AL LEER PROVEEDORES: " FS-PSEQ	
+		  STOP RUN.
+		  
+	   CICLO-IND.
+	   WRITE PRO FROM PROSEQ
+	      INVALID KEY DISPLAY "ERROR DE CLAVE".
+	   IF FS-PROV NOT = ZERO AND 10
+		  DISPLAY "ERROR AL ESCRIBIR PROV: " FS-PROV
+		  STOP RUN.	 
+		  
+	   CERRAR-ARCHIVOS.
+	   DISPLAY "CERRAR-ARCHIVOS".
+	   CLOSE PROV-SEQ.
+	   CLOSE PROV.	

@@ -1,0 +1,99 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CREARCUITPROV.
+
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+
+           SELECT CUITPROV-SEQ ASSIGN TO DISK
+                                ORGANIZATION IS LINE SEQUENTIAL
+                                FILE STATUS IS FS-PSEQ.
+           SELECT CUITPROV ASSIGN TO DISK
+                                ORGANIZATION IS INDEXED
+                                ACCESS MODE IS DYNAMIC
+                                RECORD KEY IS CPR-CLAVE
+                                FILE STATUS IS FS-CPR.
+								
+       DATA DIVISION.
+       FILE SECTION.
+
+       FD CUITPROV-SEQ LABEL RECORD IS STANDARD
+                  VALUE OF FILE-ID IS 
+                  "C:\PROVS\cuitprovseq.dat".
+
+       01 CPRSEQ.
+	   03 CPRSEQ-CUIT-CONS             PIC 9(15).
+	   03 CPRSEQ-COD-PROV              PIC 9(08).
+	   03 CPRSEQ-FECHA-ALTA            PIC 9(08).	          
+
+       FD CUITPROV LABEL RECORD IS STANDARD
+                   VALUE OF FILE-ID IS 
+                   "C:\PROVS\cuitprov.dat".
+       
+       01 CPR.
+           03 CPR-CLAVE.
+              05 CPR-CUIT-CONS                PIC 9(15).
+              05 CPR-COD-PROV                 PIC 9(08).
+           03 CPR-FECHA-ALTA                  PIC 9(08).      
+
+       WORKING-STORAGE SECTION.
+       77 FS-PSEQ		        PIC XX.       
+       77 FS-CPR                PIC XX.       
+                
+       PROCEDURE DIVISION.
+       DECLARATIVES.
+       DECLAR-INPUT SECTION.
+       USE AFTER ERROR PROCEDURE ON INPUT.
+       CONTINUE-INPUT.
+           CONTINUE.
+       DECLAR-OUTPUT SECTION.
+       USE AFTER ERROR PROCEDURE ON OUTPUT.
+       CONTINUE-OUTPUT.
+           CONTINUE.
+       DECLAR-IO SECTION.
+       USE AFTER ERROR PROCEDURE ON I-O.
+       CONTINUE-IO.
+           CONTINUE.
+       DECLAR-EXTEND SECTION.
+       USE AFTER ERROR PROCEDURE ON EXTEND.
+       CONTINUE-EXTEND.
+           CONTINUE.
+       END DECLARATIVES.
+	   
+	   PROGRAMA SECTION.
+	   INICIO.    
+		   PERFORM ABRIR-ARCHIVOS.
+           PERFORM LEER-PROV.
+		   PERFORM CICLO-IND UNTIL FS-PSEQ = 10 OR FS-CPR = 10.
+		   PERFORM CERRAR-ARCHIVOS.
+		   STOP RUN.
+
+	   ABRIR-ARCHIVOS.
+	   DISPLAY "ABRIENDO ARCHIVOS".
+	   OPEN INPUT CUITPROV-SEQ.
+	   IF FS-PSEQ NOT = ZERO 
+		  DISPLAY "ERROR AL ABRIR PROVEEDORES: " FS-PSEQ
+		  STOP RUN.
+	   OPEN OUTPUT CUITPROV.
+	   IF FS-CPR NOT = ZERO	
+		  DISPLAY "ERROR AL ABRIR PROVEEDORES INDEXADO: " FS-CPR
+		  STOP RUN.
+		  
+	   LEER-PROV.
+	   DISPLAY "LEO PROV-SEQ".
+	   READ CUITPROV-SEQ.
+	   IF FS-PSEQ NOT = ZERO AND 10
+		  DISPLAY "ERROR AL LEER PROVEEDORES: " FS-PSEQ	
+		  STOP RUN.
+		  
+	   CICLO-IND.
+	   WRITE CPR FROM CPRSEQ
+	      INVALID KEY DISPLAY "ERROR DE CLAVE".
+	   IF FS-CPR NOT = ZERO AND 10
+		  DISPLAY "ERROR AL ESCRIBIR CUITPROV: " FS-CPR
+		  STOP RUN.	 
+		  
+	   CERRAR-ARCHIVOS.
+	   DISPLAY "CERRAR-ARCHIVOS".
+	   CLOSE CUITPROV-SEQ.
+	   CLOSE CUITPROV.	
