@@ -1,0 +1,124 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ACTUALIZAR-PROV.
+
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+
+           SELECT PROV ASSIGN TO DISK
+                                ORGANIZATION IS INDEXED
+                                ACCESS MODE IS RANDOM
+                                RECORD KEY IS PRO-CLAVE
+                                FILE STATUS IS FS-PROV.
+								
+       DATA DIVISION.	   
+       FILE SECTION.
+
+       FD PROV LABEL RECORD IS STANDARD
+                   VALUE OF FILE-ID IS 
+                   "C:\PROVS\prov.dat".
+       
+       01 PRO.
+           03 PRO-CLAVE.              
+              05 CPR-COD-PROV          PIC 9(08).
+	   03 PRO-DIRECCION                PIC X(30).
+	   03 PRO-TELEFONO                 PIC X(15).
+	   03 PRO-RUBRO                    PIC 9(04).
+	   03 PRO-DESCRIP-RUBRO            PIC X(15).	   
+	   03 PRO-FECHA-ALTA               PIC 9(08).
+	   03 PRO-CANT-CONS-ASIG           PIC 9(03).		   
+	   
+	   
+       WORKING-STORAGE SECTION.           
+       77 FS-PROV               PIC XX.      
+	   01 CLAVE-DE-TRABAJO      PIC 9(08).
+	   
+	   
+	   LINKAGE SECTION.
+	   01 PARAM                 PIC X.
+	   01 CLAVE                 PIC 9(08).
+	   01 RUBRO                 PIC 9(04).
+	   01 DESCRIP-RUBRO         PIC X(15).
+                
+       PROCEDURE DIVISION USING PARAM,CLAVE,RUBRO,DESCRIP-RUBRO.
+       DECLARATIVES.
+       DECLAR-INPUT SECTION.
+       USE AFTER ERROR PROCEDURE ON INPUT.
+       CONTINUE-INPUT.
+           CONTINUE.
+       DECLAR-OUTPUT SECTION.
+       USE AFTER ERROR PROCEDURE ON OUTPUT.
+       CONTINUE-OUTPUT.
+           CONTINUE.
+       DECLAR-IO SECTION.
+       USE AFTER ERROR PROCEDURE ON I-O.
+       CONTINUE-IO.
+           CONTINUE.
+       DECLAR-EXTEND SECTION.
+       USE AFTER ERROR PROCEDURE ON EXTEND.
+       CONTINUE-EXTEND.
+           CONTINUE.
+       END DECLARATIVES.
+	   
+	   PROGRAMA SECTION.
+	   INICIO.    
+		   PERFORM VER-PARAMETRO.
+		   EXIT PROGRAM.		   
+		   
+		   
+	   VER-PARAMETRO.
+	   IF PARAM EQUAL 'A'	
+		  DISPLAY "ABRIR ARCHIVO".
+		  PERFORM ABRIR-ARCHIVO.
+		  EXIT PROGRAM.
+		  
+	   IF PARAM EQUAL 'C'	
+		  DISPLAY "CERRAR ARCHIVO".
+		  PERFORM CERRAR-ARCHIVO.
+		  EXIT PROGRAM.	  
+	
+	   IF PARAM EQUAL 'M'	
+		  DISPLAY "ACTUALIZAR PROVEEDOR".
+		  PERFORM ACTUALIZAR.
+		  EXIT PROGRAM.
+		
+	   DISPLAY "PARAMETRO INCORRECTO".
+	   EXIT PROGRAM.
+		
+
+	   ABRIR-ARCHIVO.
+	   DISPLAY "ABRIENDO ARCHIVO".	   
+	   OPEN I-O PROV.
+	   IF FS-PROV NOT = ZERO	
+		  DISPLAY "ERROR AL ABRIR PROV INDEXADO: " FS-PROV
+	      EXIT PROGRAM.
+
+       CERRAR-ARCHIVO.
+	   DISPLAY "CERRAR-ARCHIVOS".	   
+	   CLOSE PROV.	   	  
+	   
+	   ACTUALIZAR.
+	   PERFORM ARMAR-CLAVE.
+	   PERFORM LEER-PROV.
+	   PERFORM PROCESAR.
+	   
+	   
+	   ARMAR-CLAVE.
+	   MOVE CLAVE TO CLAVE-DE-TRABAJO.
+	   
+	   LEER-PROV.
+	   READ PROV RECORD INTO PRO
+				 KEY IS CLAVE-DE-TRABAJO.
+	   IF FS-PROV NOT EQUAL '00'
+		  DISPLAY "ERROR AL LEER PROV INDEXADO: " FS-PROV
+		  EXIT PROGRAM.	  
+		  
+	   PROCESAR.
+	   ADD 1 TO PRO-CANT-CONS-ASIG.
+	   MOVE PRO-RUBRO TO RUBRO.
+	   MOVE PRO-DESCRIP-RUBRO TO DESCRIP-RUBRO.
+	   REWRITE  PRO.
+	   IF FS-PROV NOT EQUAL '00'
+	      DISPLAY "ERROR AL ESCRIBIR: " FS-PROV
+		  EXIT PROGRAM.
+	   
