@@ -232,7 +232,7 @@
        BUSCAR-EN-CPR.
            MOVE MAE-ACTUAL-CUIT-CONS TO CPR-CUIT-CONS.
            MOVE 00000000 TO CPR-COD-PROV.
-           START CUITPROV KEY IS EQUAL CPR-CLAVE.
+           START CUITPROV KEY >= CPR-CLAVE.
            IF NOT FS-CPR EQUAL TO ZERO
               IF FS-CPR = 23
                  DISPLAY "EL CUIT: " CPR-CUIT-CONS "NO EXISTE"
@@ -314,6 +314,7 @@
               STOP RUN.
 
        CERRAR-ARCHIVOS.
+           DISPLAY "CERRAR ARCHS PPAL".
            CLOSE MAESTRO.
            CLOSE LIS-PROV.
            CLOSE CUITPROV.
@@ -336,8 +337,9 @@
            IF cantLineas >= 60 
               PERFORM IMPRIMIR-ENCABEZADO.
            PERFORM IMPRIMIR-DET-PROV.
-           ADD 1 TO cantProvs.
            PERFORM LEER-DATOS.    
+           IF WS-RUBRO-ACTUAL = SD-RUBRO
+              ADD 1 TO cantProvs.
 
        IMPRIMIR-ENCABEZADO.
            MOVE cantHojas TO PE1-HOJA.
@@ -379,7 +381,7 @@
 
        IMPRIMIR-TOTAL-RUBRO.
            MOVE cantProvs TO PEPR-TOTAL.
-           WRITE LINEA FROM PEPR-TOTAL.
+           WRITE LINEA FROM PEPR.
            PERFORM CHECK-WRITE-LIS-PROV.
            ADD 1 TO cantLineas.
 
