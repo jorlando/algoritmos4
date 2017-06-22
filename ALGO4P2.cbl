@@ -16,8 +16,8 @@
                                 ACCESS MODE IS DYNAMIC
                                 RECORD KEY IS CPR-CLAVE
                                 FILE STATUS IS FS-CPR.
-           SELECT SD-SORT ASSIGN TO SORT.
-      *                          SORT STATUS IS FS-SORT.
+           SELECT SD-SORT ASSIGN TO DISK
+                                FILE STATUS IS FS-SORT.
        
        DATA DIVISION.
        FILE SECTION.
@@ -135,13 +135,19 @@
           03 PDETR-CUIT-CONS      PIC X(15).
           03 PDETR-NOMBRE-CONS    PIC X(20).
           03 PDETR-TEL            PIC X(15).
-          03 PDETR-DIRECCION       PIC X(21).
+          03 PDETR-DIRECCION      PIC X(21).
       
        01 PEPR.
           03 F PIC X(40) 
            VALUE 'TOTAL DE PROVEEDORES POR RUBRO: '.
           03 PEPR-TOTAL PIC 9999 VALUE ZERO.
-                
+        
+       01 PARAM                 PIC X.
+       01 CLAVE                 PIC 9(08).        
+       01 RUBRO                 PIC 9(04).
+       01 DESCRIP-RUBRO         PIC X(15).
+       01 S-ERR                 PIC XX.
+        
        PROCEDURE DIVISION.
        DECLARATIVES.
        DECLAR-INPUT SECTION.
@@ -204,6 +210,12 @@
 
        ABRIR-PROV.
       * HACER EL LLAMADO AL SUBPROG CON PARAM "A" Y ABRIR
+           MOVE 'A' TO PARAM.
+           CALL 'ACTUALIZAR-PROV' USING PARAM, CLAVE, RUBRO, 
+                 DESCRIP-RUBRO, S-ERR.
+           IF S-ERR = '01' 
+              DISPLAY "Error en subprograma"
+              STOP RUN.
 
        LEER-MAESTRO.
            READ MAESTRO.
@@ -257,7 +269,14 @@
            MOVE MAE-ACTUAL-NOMBRE-CONSORCIO TO SD-NOM-CONS.
            MOVE MAE-ACTUAL-TEL TO SD-TEL-CONS.
            MOVE MAE-ACTUAL-DIR TO SD-DIR-CONS.
-      * ESTAS TIENEN Q VENIR DEL SUBPROGRAMA    
+      * ESTAS TIENEN Q VENIR DEL SUBPROGRAMA 
+           MOVE 'M' TO PARAM.
+           MOVE CPR-COD-PROV TO CLAVE.
+           CALL 'ACTUALIZAR-PROV' USING PARAM, CLAVE, RUBRO, 
+                 DESCRIP-RUBRO, S-ERR.
+           IF S-ERR = '01' 
+              DISPLAY "Error en subprograma"
+              STOP RUN.   
            MOVE RSP-RUBRO TO SD-RUBRO.
            MOVE RSP-DESC-RUBRO TO SD-DESC-RUBRO.
            RELEASE REG-SORT.
@@ -287,6 +306,12 @@
 
        CERRAR-PROV.
       * HACER LLAMADO A SUBPROG CON PARAM "C" Y CERRAR ARCHIVO
+           MOVE 'C' TO PARAM.
+           CALL 'ACTUALIZAR-PROV' USING PARAM, CLAVE, RUBRO, 
+                 DESCRIP-RUBRO, S-ERR.
+           IF S-ERR = '01' 
+              DISPLAY "Error en subprograma"
+              STOP RUN.
 
        CERRAR-ARCHIVOS.
            CLOSE MAESTRO.
