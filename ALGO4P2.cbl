@@ -277,8 +277,8 @@
            IF S-ERR = '01' 
               DISPLAY "Error en subprograma"
               STOP RUN.   
-           MOVE RSP-RUBRO TO SD-RUBRO.
-           MOVE RSP-DESC-RUBRO TO SD-DESC-RUBRO.
+           MOVE RUBRO TO SD-RUBRO.
+           MOVE DESCRIP-RUBRO TO SD-DESC-RUBRO.
            RELEASE REG-SORT.
 
        ACTUALIZA-PROV.
