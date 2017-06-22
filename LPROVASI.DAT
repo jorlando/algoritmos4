@@ -1,0 +1,26 @@
+Fecha: 22/06/17                                  Nro. Hoja:                 0001
+                                                                                
+                        LISTADO DE PROVEDORES ASIGNADOS                         
+                                                                                
+RUBRO:       00000001 DESCRIPCION RUBRO: RUBRO 1                                
+COD-PROV CUIT-CONS      NOMBRE-CONS         TEL            DIRECCION            
+22222222000030011111111CONSORCIO 1 ARCHIVO   011-4222-2221CALLE 1 NRO 1         
+22222222000030022222222CONSORCIO 1 ARCHIVO   011-4222-1222CALLE 2 NRO 1         
+33333333000030011111111CONSORCIO 1 ARCHIVO   011-4222-2221CALLE 1 NRO 1         
+TOTAL DE PROVEEDORES POR RUBRO:         0003                                    
+RUBRO:       00000002 DESCRIPCION RUBRO: RUBRO 2                                
+COD-PROV CUIT-CONS      NOMBRE-CONS         TEL            DIRECCION            
+44444444000030022222223CONSORCIO 2 ARCHIVO   011-4222-2222CALLE 2 NRO 2         
+44444444000030031111111CONSORCIO 3 ARCHIVO   011-4222-2223CALLE 1 NRO 3         
+44444444000030033333333CONSORCIO 1 ARCHIVO   011-4221-2222CALLE 2 NRO 3         
+TOTAL DE PROVEEDORES POR RUBRO:         0003                                    
+RUBRO:       00000003 DESCRIPCION RUBRO: RUBRO 3                                
+COD-PROV CUIT-CONS      NOMBRE-CONS         TEL            DIRECCION            
+55555555000030022222223CONSORCIO 2 ARCHIVO   011-4222-2222CALLE 2 NRO 2         
+55555555000030033333335CONSORCIO 3 ARCHIVO   011-4223-2222CALLE 2 NRO 3         
+TOTAL DE PROVEEDORES POR RUBRO:         0002                                    
+RUBRO:       00000004 DESCRIPCION RUBRO: RUBRO 4                                
+COD-PROV CUIT-CONS      NOMBRE-CONS         TEL            DIRECCION            
+77777777000030031111111CONSORCIO 3 ARCHIVO   011-4222-2223CALLE 1 NRO 3         
+TOTAL DE PROVEEDORES POR RUBRO:         0001                                    
+Total Rubros:                      004                                          

@@ -233,16 +233,28 @@
            MOVE MAE-ACTUAL-CUIT-CONS TO CPR-CUIT-CONS.
            MOVE 00000000 TO CPR-COD-PROV.
            START CUITPROV KEY >= CPR-CLAVE.
-           IF NOT FS-CPR EQUAL TO ZERO
-              IF FS-CPR = 23
-                 DISPLAY "EL CUIT: " CPR-CUIT-CONS "NO EXISTE"
-              ELSE 
+           IF MAE-ACTUAL-CUIT-CONS = CPR-CUIT-CONS 
+              PERFORM PROCESAR-CUIT
+           else
+              if not FS-CPR EQUAL TO ZERO
                  DISPLAY "Err al buscar un cuit" FS-CPR
                  STOP RUN
-              END-IF
-           ELSE 
-              PERFORM PROCESAR-CUIT
+              else
+                 DISPLAY "EL CUIT: " MAE-ACTUAL-CUIT-CONS "NO EXISTE"
+              end-if
            END-IF.
+      * hasta aca funcaba pero siempremodificaba xq tomaba 
+      * el mas proximo por el >= de start
+      *     IF NOT FS-CPR EQUAL TO ZERO
+      *        IF FS-CPR = 23
+      *           DISPLAY "EL CUIT: " CPR-CUIT-CONS "NO EXISTE"
+      *        ELSE 
+      *           DISPLAY "Err al buscar un cuit" FS-CPR
+      *           STOP RUN
+      *        END-IF
+      *     ELSE 
+      *        PERFORM PROCESAR-CUIT
+      *     END-IF.
 
        PROCESAR-CUIT.
            PERFORM LEER-PROX-CPR.
@@ -336,7 +348,8 @@
               PERFORM IMPRIMIR-ENCABEZADO.
            PERFORM IMPRIMIR-DET-PROV.
            PERFORM LEER-DATOS.    
-           IF WS-RUBRO-ACTUAL = SD-RUBRO
+           IF WS-RUBRO-ACTUAL = SD-RUBRO AND
+              FS-SORT NOT = 10
               ADD 1 TO cantProvs.
 
        IMPRIMIR-ENCABEZADO.
