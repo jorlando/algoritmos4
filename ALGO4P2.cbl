@@ -183,7 +183,7 @@
            PERFORM LEER-MAESTRO.
            PERFORM CICLO-CUIT UNTIL FS-MAE = 10 OR FS-CPR = 10.
            
-      * PP-GRAL SECTION.
+       PP-GRAL SECTION.
        INICIALIZAR.
            DISPLAY "INICIALIZAR INICIA".
            MOVE 1 TO cantHojas.
@@ -296,7 +296,7 @@
            perform CERRAR-ARCHIVOS.       
 
 
-      * OTROS2 SECTION.
+       OTROS2 SECTION.
        LEER-DATOS.
            RETURN SD-SORT RECORD 
                   AT END GO FIN.
