@@ -17,7 +17,7 @@
                                 RECORD KEY IS CPR-CLAVE
                                 FILE STATUS IS FS-CPR.
            SELECT SD-SORT ASSIGN TO DISK
-                                FILE STATUS IS FS-SORT.
+                                 file STATUS IS FS-SORT.
        
        DATA DIVISION.
        FILE SECTION.
@@ -114,7 +114,7 @@
        01 P-FINAL.
           03 F PIC X(35) 
            	  VALUE 'Total Rubros: '.
-          03 P-FINAL-TOTAL PIC ZZ9 VALUE ZERO.
+          03 P-FINAL-TOTAL PIC 999 VALUE ZERO.
 		   
 
        01 PER1.
@@ -185,7 +185,7 @@
            
        PP-GRAL SECTION.
        INICIALIZAR.
-           DISPLAY "INICIALIZAR INICIA".
+      *     DISPLAY "INICIALIZAR INICIA".
            MOVE 1 TO cantHojas.
            MOVE 4 TO cantLineas.
            ACCEPT FECHA FROM DATE.
@@ -194,7 +194,7 @@
            MOVE FECHA-DD TO PE1-FECHA-DD.
 
        ABRIR-ARCHIVOS.
-           DISPLAY "ABRIR-ARCHIVOS INICIA".
+      *     DISPLAY "ABRIR-ARCHIVOS INICIA".
            OPEN INPUT MAESTRO.
            IF FS-MAE NOT = ZERO
               DISPLAY "Err abrir Maestro: " FS-MAE
@@ -219,7 +219,7 @@
 
        LEER-MAESTRO.
            READ MAESTRO.
-           DISPLAY "LEO-MAESTRO " FS-MAE.
+      *     DISPLAY "LEO-MAESTRO " FS-MAE.
            IF FS-MAE NOT = ZERO AND 10
               DISPLAY "Err leer maestro " FS-MAE
               STOP RUN.         
@@ -288,21 +288,19 @@
        LISTADO SECTION.
            perform IMPRIMIR-ENCABEZADO.
            PERFORM LEER-DATOS.
-           PERFORM CICLO-GRAL UNTIL FS-SORT = '10'.
+           PERFORM CICLO-GRAL UNTIL FS-SORT = 10.
            IF cantLineas >= 60 
               PERFORM IMPRIMIR-ENCABEZADO.
-           Perform IMPRIMIR-TOTAL-FINAL.
+           perform IMPRIMIR-TOTAL-FINAL.
            PERFORM CERRAR-PROV.
-           perform CERRAR-ARCHIVOS.       
+           perform CERRAR-ARCHIVOS.   
+           STOP RUN.    
 
 
        OTROS2 SECTION.
        LEER-DATOS.
            RETURN SD-SORT RECORD 
-                  AT END GO FIN.
-
-       FIN.
-           EXIT.
+                  AT END  MOVE 10 TO FS-SORT.
 
        CERRAR-PROV.
       * HACER LLAMADO A SUBPROG CON PARAM "C" Y CERRAR ARCHIVO
@@ -314,7 +312,7 @@
               STOP RUN.
 
        CERRAR-ARCHIVOS.
-           DISPLAY "CERRAR ARCHS PPAL".
+      *     DISPLAY "CERRAR ARCHS PPAL".
            CLOSE MAESTRO.
            CLOSE LIS-PROV.
            CLOSE CUITPROV.
@@ -328,7 +326,7 @@
            PERFORM IMPRIMIR-ENC-RUBRO.
            PERFORM PROCESAR-SIGUIENTE UNTIL 
                        WS-RUBRO-ACTUAL NOT = SD-RUBRO 
-                       OR FS-SORT = '10'.
+                       OR FS-SORT = 10.
            IF cantLineas >= 60 
               PERFORM IMPRIMIR-ENCABEZADO.
            PERFORM IMPRIMIR-TOTAL-RUBRO.
@@ -355,7 +353,7 @@
            MOVE 4 TO cantLineas.
 
        IMPRIMIR-TOTAL-FINAL.
-           DISPLAY "IMPRIMIR-TOTAL-FINAL".
+      *     DISPLAY "IMPRIMIR-TOTAL-FINAL" cantRubros.
            MOVE cantRubros TO P-FINAL-TOTAL.
            WRITE LINEA FROM P-FINAL.
            PERFORM CHECK-WRITE-LIS-PROV.
