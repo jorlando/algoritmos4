@@ -182,7 +182,7 @@
            PERFORM ABRIR-PROV.
            PERFORM LEER-MAESTRO.
            PERFORM CICLO-CUIT UNTIL FS-MAE = 10 OR FS-CPR = 10.
-
+           
       * PP-GRAL SECTION.
        INICIALIZAR.
            DISPLAY "INICIALIZAR INICIA".
@@ -211,7 +211,7 @@
        ABRIR-PROV.
       * HACER EL LLAMADO AL SUBPROG CON PARAM "A" Y ABRIR
            MOVE 'A' TO PARAM.
-           CALL 'ACTUALIZAR-PROV' USING PARAM, CLAVE, RUBRO, 
+           CALL 'ACTPROV' USING PARAM, CLAVE, RUBRO, 
                  DESCRIP-RUBRO, S-ERR.
            IF S-ERR = '01' 
               DISPLAY "Error en subprograma"
@@ -234,7 +234,7 @@
            MOVE 00000000 TO CPR-COD-PROV.
            START CUITPROV KEY IS EQUAL CPR-CLAVE.
            IF NOT FS-CPR EQUAL TO ZERO
-              IF FS-CPR NOT = '23'
+              IF FS-CPR = 23
                  DISPLAY "EL CUIT: " CPR-CUIT-CONS "NO EXISTE"
               ELSE 
                  DISPLAY "Err al buscar un cuit" FS-CPR
@@ -246,14 +246,14 @@
 
        PROCESAR-CUIT.
            PERFORM LEER-PROX-CPR.
-           PERFORM LEER-REGS UNTIL FS-CPR = '10' OR 
+           PERFORM LEER-REGS UNTIL FS-CPR = 10 OR 
                    CPR-CUIT-CONS NOT EQUAL TO 
                    MAE-ACTUAL-CUIT-CONS.
            
 
        LEER-PROX-CPR.
            READ CUITPROV NEXT RECORD.
-           IF FS-CPR NOT = '00' AND FS-CPR NOT = '10'
+           IF FS-CPR NOT = 00 AND FS-CPR NOT = 10
               DISPLAY "Err al leer next" FS-CPR
               STOP RUN
            END-IF.
@@ -272,7 +272,7 @@
       * ESTAS TIENEN Q VENIR DEL SUBPROGRAMA 
            MOVE 'M' TO PARAM.
            MOVE CPR-COD-PROV TO CLAVE.
-           CALL 'ACTUALIZAR-PROV' USING PARAM, CLAVE, RUBRO, 
+           CALL 'ACTPROV' USING PARAM, CLAVE, RUBRO, 
                  DESCRIP-RUBRO, S-ERR.
            IF S-ERR = '01' 
               DISPLAY "Error en subprograma"
@@ -307,7 +307,7 @@
        CERRAR-PROV.
       * HACER LLAMADO A SUBPROG CON PARAM "C" Y CERRAR ARCHIVO
            MOVE 'C' TO PARAM.
-           CALL 'ACTUALIZAR-PROV' USING PARAM, CLAVE, RUBRO, 
+           CALL 'ACTPROV' USING PARAM, CLAVE, RUBRO, 
                  DESCRIP-RUBRO, S-ERR.
            IF S-ERR = '01' 
               DISPLAY "Error en subprograma"
